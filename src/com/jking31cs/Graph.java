@@ -10,12 +10,14 @@ public class Graph {
 	
 	List<Point> points; //vertices
 	
-	List<Integer> v;    //half edge starting point indices
-	List<Integer> n;    //half edge ending point indices
-	List<Integer> o;    //opposite half edge index of given half edge index;
+	List<Integer> v;      //half edge starting point indices
+	List<Integer> n;      //half edge ending point indices
+	List<Integer> o;      //opposite half edge index of given half edge index;
 
-	List<Integer> h;    //half edge on the face given
-	List<Integer> f;    //face for given half edge index.
+	List<Integer> h;      //half edge on the face given
+	List<Integer> f;      //face for given half edge index.
+	
+	List<Corner> corners; //
 	
 	public Graph() {
 		points = new ArrayList<>();
@@ -68,22 +70,34 @@ public class Graph {
 		while (true) {
 			nextIndex = o.get(curIndex);
 			boolean found = false;
+			boolean startingPointFound = false;
 			for (int j = 0; j < v.size(); j++) {
 				if (j == nextIndex) continue;
 				if (v.get(j) == v.get(nextIndex)) {
+					
+					//Check if already found given next index.
+					if (v.get(j) == v.get(target)) {
+						if (copy[j] == null || copy[o.get(j)] == null) {
+							startingPointFound = true;
+							continue;							
+						}
+					}
+					
 					nextArr[curIndex] = j;
 					curIndex = j;
 					copy[curIndex] = null;
-					nextIndex = o.get(j);
 					found = true;
 					break;
 				}
 			}
-			if (!found) {
+			if (startingPointFound && !found) {
+				nextArr[curIndex] = target;
+				curIndex = target;
+				copy[curIndex] = null;
+			} else if (!found) {
 				nextArr[curIndex] = nextIndex;
 				curIndex = nextIndex;
 				copy[curIndex] = null;
-				nextIndex = o.get(nextIndex);
 			}
 			if (curIndex == target) {
 				Integer nextPoint = null;
