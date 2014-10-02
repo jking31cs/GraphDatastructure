@@ -56,6 +56,8 @@ public class GraphTest {
 		assertTrue(g.f.get(0) == g.f.get(2) && g.f.get(2) == g.f.get(4));
 		assertTrue(g.f.get(1) == g.f.get(3) && g.f.get(3) == g.f.get(5));
 		assertFalse(g.f.get(0) == g.f.get(1));
+		
+		assertEquals(2, g.h.size());
 
 	}
 

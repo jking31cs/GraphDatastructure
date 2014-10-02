@@ -2,7 +2,9 @@ package com.jking31cs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Graph {
 	
@@ -22,14 +24,6 @@ public class Graph {
 		f = new ArrayList<>();
 		h = new ArrayList<>();
 		o = new ArrayList<>();
-	}
-	
-	public HalfEdge getHalfEdge(Integer index) {
-		return new HalfEdge(points.get(v.get(index)), points.get(n.get(index)));
-	}
-	
-	public HalfEdge getOppositeHalfEdge(Integer index) {
-		return new HalfEdge(points.get(v.get(o.get(index))), points.get(n.get(o.get(index))));
 	}
 	
 	public void addVertex(Point p) {
@@ -141,5 +135,17 @@ public class Graph {
 			faceCount++;
 		}
 		f = Arrays.asList(faceArr);
+		
+		/*
+		 * Find half edge on given face.
+		 */
+		Set<Integer> faceIndices = new HashSet<>(f);
+		h = new ArrayList<>();
+		for (int i = 0; i < f.size(); i++) {
+			if (faceIndices.contains(f.get(i))) {
+				h.add(f.get(i), i);
+				faceIndices.remove(f.get(i));
+			}
+		}
 	}
 }
