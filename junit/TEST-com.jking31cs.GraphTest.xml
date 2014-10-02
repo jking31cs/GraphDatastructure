@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="sis-jrk-l01" name="com.jking31cs.GraphTest" skipped="0" tests="3" time="1.453" timestamp="2014-10-02T23:10:44">
+  <properties>
+    <property name="java.vendor" value="Oracle Corporation" />
+    <property name="env.__CHECKFIX1436934" value="1" />
+    <property name="sun.java.launcher" value="SUN_STANDARD" />
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
+    <property name="env.SECURITYSESSIONID" value="186a4" />
+    <property name="os.name" value="Mac OS X" />
+    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/classes" />
+    <property name="env.TMPDIR" value="/var/folders/17/9wmcxhq109nc7ngm3gx22dnrcw019d/T/" />
+    <property name="env.PWD" value="/Users/jking31/eclipse-projects/GraphDataStructure" />
+    <property name="env.LANG" value="en_US.UTF-8" />
+    <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+    <property name="env.CDC_JOINED_ZONE" value="DC=ctisl,DC=gtri,DC=org" />
+    <property name="ant.home" value="/Users/jking31/apps/apache-ant-1.9.4" />
+    <property name="java.runtime.version" value="1.7.0_65-b17" />
+    <property name="env.CDC_JOINED_SITE" value="Campus" />
+    <property name="env.Apple_PubSub_Socket_Render" value="/tmp/launch-5OmsmD/Render" />
+    <property name="env.JAVA_MAIN_CLASS_74495" value="org.apache.tools.ant.launch.Launcher" />
+    <property name="user.name" value="jking31" />
+    <property name="env.USER" value="jking31" />
+    <property name="env.SHELL" value="/bin/bash" />
+    <property name="env.__CF_USER_TEXT_ENCODING" value="0x19C0052D:0:0" />
+    <property name="env.PATH" value="/Users/jking31/apps/apache-ant-1.9.4/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin" />
+    <property name="user.language" value="en" />
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib" />
+    <property name="ant.project.default-target" value="build" />
+    <property name="ant.project.name" value="GraphDataStructure" />
+    <property name="java.version" value="1.7.0_65" />
+    <property name="user.timezone" value="" />
+    <property name="sun.arch.data.model" value="64" />
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/endorsed" />
+    <property name="sun.cpu.isalist" value="" />
+    <property name="sun.jnu.encoding" value="UTF-8" />
+    <property name="file.encoding.pkg" value="sun.io" />
+    <property name="env.SHLVL" value="1" />
+    <property name="ECLIPSE_HOME" value="../../../../Applications/eclipse/" />
+    <property name="file.separator" value="/" />
+    <property name="java.specification.name" value="Java Platform API Specification" />
+    <property name="java.class.version" value="51.0" />
+    <property name="user.country" value="US" />
+    <property name="ant.file.GraphDataStructure" value="/Users/jking31/eclipse-projects/GraphDataStructure/build.xml" />
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre" />
+    <property name="java.vm.info" value="mixed mode" />
+    <property name="env.KRB5CCNAME" value="FILE:/tmp/krb5cc_432014637" />
+    <property name="env.LOGNAME" value="jking31" />
+    <property name="ant.file" value="/Users/jking31/eclipse-projects/GraphDataStructure/build.xml" />
+    <property name="os.version" value="10.9.5" />
+    <property name="env.TERM_PROGRAM_VERSION" value="326" />
+    <property name="env.CLICOLOR" value="1" />
+    <property name="path.separator" value=":" />
+    <property name="java.vm.version" value="24.65-b04" />
+    <property name="ant.library.dir" value="/Users/jking31/apps/apache-ant-1.9.4/lib" />
+    <property name="junit.output.dir" value="junit" />
+    <property name="env.JAVA_HOME" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home" />
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob" />
+    <property name="env.CDC_PREW2KHOST" value="sis-jrk-l01" />
+    <property name="env.TERM" value="xterm-256color" />
+    <property name="sun.io.unicode.encoding" value="UnicodeBig" />
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit" />
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
+    <property name="env.LSCOLORS" value="gxBxhxDxfxhxhxhxhxcxcx" />
+    <property name="env.CDC_LOCALHOST" value="sis-jrk-l01.ctisl.gtri.org" />
+    <property name="user.home" value="/Users/jking31" />
+    <property name="target" value="1.7" />
+    <property name="java.specification.vendor" value="Oracle Corporation" />
+    <property name="env.CDC_JOINED_DOMAIN" value="ctisl.gtri.org" />
+    <property name="ant.file.type.GraphDataStructure" value="file" />
+    <property name="env.TERM_PROGRAM" value="Apple_Terminal" />
+    <property name="java.library.path" value="/Users/jking31/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:." />
+    <property name="java.vendor.url" value="http://java.oracle.com/" />
+    <property name="gopherProxySet" value="false" />
+    <property name="java.vm.vendor" value="Oracle Corporation" />
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
+    <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on April 29 2014" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.jking31cs.GraphTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/jking31/eclipse-projects/GraphDataStructure/junit/TEST-com.jking31cs.GraphTest.xml crashfile=/Users/jking31/eclipse-projects/GraphDataStructure/junitvmwatcher7498614658597307835.properties propsfile=/Users/jking31/eclipse-projects/GraphDataStructure/junit3425912150145060462.properties" />
+    <property name="java.class.path" value="/Users/jking31/eclipse-projects/GraphDataStructure/bin:/Users/jking31/Desktop/Processing-Jars/core.jar:/Applications/eclipse/plugins/org.junit_4.11.0.v201303080030/junit.jar:/Applications/eclipse/plugins/org.hamcrest.core_1.3.0.v201303031735.jar:/Users/jking31/apps/apache-ant-1.9.4/lib/ant-launcher.jar:/Users/jking31/apps/apache-ant-1.9.4/lib/ant.jar:/Users/jking31/apps/apache-ant-1.9.4/lib/ant-junit.jar:/Users/jking31/apps/apache-ant-1.9.4/lib/ant-junit4.jar" />
+    <property name="env.TERM_SESSION_ID" value="20F88758-2279-4EEA-AB85-B3C4EF4E2558" />
+    <property name="env.SIS_ROOT" value="/Users/jking31/git-work/sis" />
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+    <property name="ant.file.type" value="file" />
+    <property name="java.vm.specification.version" value="1.7" />
+    <property name="sun.cpu.endian" value="little" />
+    <property name="sun.os.patch.level" value="unknown" />
+    <property name="debuglevel" value="source,lines,vars" />
+    <property name="env.HOME" value="/Users/jking31" />
+    <property name="java.io.tmpdir" value="/var/folders/17/9wmcxhq109nc7ngm3gx22dnrcw019d/T/" />
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+    <property name="env.GIT_PS1_SHOWDIRTYSTATE" value="true" />
+    <property name="env.SSH_AUTH_SOCK" value="/tmp/launch-rclHzb/Listeners" />
+    <property name="env.USER_PRINCIPAL_NAME" value="jking31@CTISL.GTRI.ORG" />
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment" />
+    <property name="os.arch" value="x86_64" />
+    <property name="java.ext.dirs" value="/Users/jking31/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java" />
+    <property name="user.dir" value="/Users/jking31/eclipse-projects/GraphDataStructure" />
+    <property name="line.separator" value="&#xa;" />
+    <property name="env.CDC_JOINED_DC" value="apatlctldc02.ctisl.gtri.org" />
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
+    <property name="basedir" value="/Users/jking31/eclipse-projects/GraphDataStructure" />
+    <property name="ant.java.version" value="1.7" />
+    <property name="ant.core.lib" value="/Users/jking31/apps/apache-ant-1.9.4/lib/ant.jar" />
+    <property name="source" value="1.7" />
+    <property name="file.encoding" value="UTF-8" />
+    <property name="env.DA_SESSION_ID_AUTH" value="2f743f3e-d754-4fc6-a0b0-69da46991c04" />
+    <property name="java.specification.version" value="1.7" />
+    <property name="ant.project.invoked-targets" value="GraphTest" />
+  </properties>
+  <testcase classname="com.jking31cs.GraphTest" name="testDanglingEdge" time="0.002" />
+  <testcase classname="com.jking31cs.GraphTest" name="testAddEdges" time="0.0" />
+  <testcase classname="com.jking31cs.GraphTest" name="testAddVertices" time="0.0" />
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
