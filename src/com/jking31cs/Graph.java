@@ -8,7 +8,6 @@ public class Graph {
 	
 	List<Integer> v;      //half edge starting point indices
 	List<Integer> n;      //half edge that follows the half edge at that index.
-    List<Integer> p;      //half edge that precedes the half edge at that index.
 	List<Integer> o;      //opposite half edge index of given half edge index;
 
 	List<Integer> h;      //half edge on the face given
@@ -159,54 +158,54 @@ public class Graph {
 			}
 		}
 
-        corners = new ArrayList<>();
-        /*
-         * Find the corners
-         *
-         * 1.  For every edge there's a corner there.
-         */
-        for (int j = 0; j < v.size(); j++) {
-            Corner c = new Corner();
-            c.v = j;
-            corners.add(c);
-        }
-        /*
-         * 2.  Calculate next corners.
-         */
-        for (Corner c1 : corners) {
-            for (int i = 0; i < corners.size(); i++) {
-                Corner c2 = corners.get(i);
-                if (c1.v.equals(c2.v)) continue;
-                if (n.get(c1.v).equals(c2.v)) {
-                    c1.n = i;
-                }
-            }
-        }
-        /*
-         * 3.  Calculate swing corners.  We do thing by finding all corners on same point, then
-         * just setting it in motion.  IE corners 0,1,2 are all point p.  The swing in order will
-         * be 1,2,0.
-         */
-        Map<Integer, Set<Integer>> cornerPointMap = new HashMap<>();
-        for (int i = 0; i < corners.size(); i++) {
-            Corner c = corners.get(i);
-            Set<Integer> set = cornerPointMap.get(v.get(c.v));
-            if (set == null) {
-                set = new HashSet<>();
-            }
-            set.add(c.v);
-            cornerPointMap.put(v.get(c.v), set);
-        }
-        for (Set<Integer> cIndicies : cornerPointMap.values()) {
-            Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
-            if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
-            int startSwingIndex = 1;
-            Corner c = corners.get(cIndexArr[0]);
-            while (c.s == null) {
-                c.s = cIndexArr[startSwingIndex % cIndexArr.length];
-                c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
-                startSwingIndex++;
-            }
-        }
+		corners = new ArrayList<>();
+		/*
+		 * Find the corners
+		 *
+		 * 1.  For every edge there's a corner there.
+		 */
+		for (int j = 0; j < v.size(); j++) {
+			Corner c = new Corner();
+			c.v = j;
+			corners.add(c);
+		}
+		/*
+		 * 2.  Calculate next corners.
+		 */
+		for (Corner c1 : corners) {
+			for (int i = 0; i < corners.size(); i++) {
+				Corner c2 = corners.get(i);
+				if (c1.v.equals(c2.v)) continue;
+				if (n.get(c1.v).equals(c2.v)) {
+					c1.n = i;
+				}
+			}
+		}
+		/*
+		 * 3.  Calculate swing corners.  We do thing by finding all corners on same point, then
+		 * just setting it in motion.  IE corners 0,1,2 are all point p.  The swing in order will
+		 * be 1,2,0.
+		 */
+		Map<Integer, Set<Integer>> cornerPointMap = new HashMap<>();
+		for (int i = 0; i < corners.size(); i++) {
+			Corner c = corners.get(i);
+			Set<Integer> set = cornerPointMap.get(v.get(c.v));
+			if (set == null) {
+				set = new HashSet<>();
+			}
+			set.add(c.v);
+			cornerPointMap.put(v.get(c.v), set);
+		}
+		for (Set<Integer> cIndicies : cornerPointMap.values()) {
+			Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
+			if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
+			int startSwingIndex = 1;
+			Corner c = corners.get(cIndexArr[0]);
+			while (c.s == null) {
+				c.s = cIndexArr[startSwingIndex % cIndexArr.length];
+				c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
+				startSwingIndex++;
+			}
+		}
 	}
 }
