@@ -39,7 +39,19 @@ public class GraphTest {
 		g.addEdge(new Edge(p1,p4));
 		
 		assertEquals(2, g.h.size());
-		
+
+        //Testing corners here.
+        assertEquals(8, g.corners.size());
+
+        assertEquals(new Corner(0,2,5), g.corners.get(0));
+        assertEquals(new Corner(1,5,2), g.corners.get(1));
+        assertEquals(new Corner(2,4,1), g.corners.get(2));
+        assertEquals(new Corner(3,1,4), g.corners.get(3));
+        assertEquals(new Corner(4,6,3), g.corners.get(4));
+        assertEquals(new Corner(5,3,6), g.corners.get(5));
+        assertEquals(new Corner(6,7,0), g.corners.get(6));
+        assertEquals(new Corner(7,0,null), g.corners.get(7));
+
 	}
 	
 	@Test
@@ -60,23 +72,23 @@ public class GraphTest {
 		assertEquals(4, g.o.size());
 		assertEquals(4, g.f.size());
 		
-		assertEquals((Integer) g.n.get(0), (Integer) 2);
-		assertEquals((Integer) g.n.get(1), (Integer) 0);
-		assertEquals((Integer) g.n.get(2), (Integer) 3);
-		assertEquals((Integer) g.n.get(3), (Integer) 1);
+		assertEquals(g.n.get(0), (Integer) 2);
+		assertEquals(g.n.get(1), (Integer) 0);
+		assertEquals(g.n.get(2), (Integer) 3);
+		assertEquals(g.n.get(3), (Integer) 1);
 		
-		assertEquals((Integer) g.f.get(0), (Integer) 0);
-		assertEquals((Integer) g.f.get(1), (Integer) 0);
-		assertEquals((Integer) g.f.get(2), (Integer) 0);
-		assertEquals((Integer) g.f.get(3), (Integer) 0);
+		assertEquals(g.f.get(0), (Integer) 0);
+		assertEquals(g.f.get(1), (Integer) 0);
+		assertEquals(g.f.get(2), (Integer) 0);
+		assertEquals(g.f.get(3), (Integer) 0);
 		
 		g.addEdge(new Edge(p3, p1));
 		
 		assertEquals(6, g.f.size());
 		
-		assertTrue(g.f.get(0) == g.f.get(2) && g.f.get(2) == g.f.get(4));
-		assertTrue(g.f.get(1) == g.f.get(3) && g.f.get(3) == g.f.get(5));
-		assertFalse(g.f.get(0) == g.f.get(1));
+		assertTrue(g.f.get(0).equals(g.f.get(2)) && g.f.get(2).equals(g.f.get(4)));
+		assertTrue(g.f.get(1).equals(g.f.get(3)) && g.f.get(3).equals(g.f.get(5)));
+		assertFalse(g.f.get(0).equals(g.f.get(1)));
 		
 		assertEquals(2, g.h.size());
 
