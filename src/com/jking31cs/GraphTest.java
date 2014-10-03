@@ -43,14 +43,14 @@ public class GraphTest {
         //Testing corners here.
         assertEquals(8, g.corners.size());
 
-        assertEquals(new Corner(0,2,5), g.corners.get(0));
-        assertEquals(new Corner(1,5,2), g.corners.get(1));
-        assertEquals(new Corner(2,4,1), g.corners.get(2));
-        assertEquals(new Corner(3,1,4), g.corners.get(3));
-        assertEquals(new Corner(4,6,3), g.corners.get(4));
-        assertEquals(new Corner(5,3,6), g.corners.get(5));
-        assertEquals(new Corner(6,7,0), g.corners.get(6));
-        assertEquals(new Corner(7,0,null), g.corners.get(7));
+        assertEquals(new CornerIndexInfo(0,2,5), g.corners.get(0));
+        assertEquals(new CornerIndexInfo(1,5,2), g.corners.get(1));
+        assertEquals(new CornerIndexInfo(2,4,1), g.corners.get(2));
+        assertEquals(new CornerIndexInfo(3,1,4), g.corners.get(3));
+        assertEquals(new CornerIndexInfo(4,6,3), g.corners.get(4));
+        assertEquals(new CornerIndexInfo(5,3,6), g.corners.get(5));
+        assertEquals(new CornerIndexInfo(6,7,0), g.corners.get(6));
+        assertEquals(new CornerIndexInfo(7,0,null), g.corners.get(7));
 
 	}
 	

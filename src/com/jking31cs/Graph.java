@@ -4,16 +4,17 @@ import java.util.*;
 
 public class Graph {
 	
-	List<Point> points; //vertices
+	public List<Point> points; //vertices
 	
 	List<Integer> v;      //half edge starting point indices
 	List<Integer> n;      //half edge that follows the half edge at that index.
 	List<Integer> o;      //opposite half edge index of given half edge index;
-
+	List<Integer> p;      //half edge that precedes the half edge at that index.
+	
 	List<Integer> h;      //half edge on the face given
 	List<Integer> f;      //face for given half edge index.
 	
-	List<Corner> corners; //corners on the graph.
+	List<CornerIndexInfo> corners; //corners on the graph.
 	
 	public Graph() {
 		points = new ArrayList<>();
@@ -109,6 +110,19 @@ public class Graph {
 		n = Arrays.asList(nextArr);
 
 		/*
+		 * We can find previous indices with the next array.
+		 */
+		p = new ArrayList<>(n.size());
+		for (int searchIndex = 0; searchIndex < n.size(); searchIndex++) {
+			for (int i = 0; i < n.size(); i++) {
+				if (n.get(i) == searchIndex) {
+					p.add(searchIndex, i);
+					break;
+				}				
+			}
+		}
+		
+		/*
 		 * Finding faces with following algorithm.
 		 * 
 		 * 1.  Go through half edges and find a loop,
@@ -165,16 +179,16 @@ public class Graph {
 		 * 1.  For every edge there's a corner there.
 		 */
 		for (int j = 0; j < v.size(); j++) {
-			Corner c = new Corner();
+			CornerIndexInfo c = new CornerIndexInfo();
 			c.v = j;
 			corners.add(c);
 		}
 		/*
 		 * 2.  Calculate next corners.
 		 */
-		for (Corner c1 : corners) {
+		for (CornerIndexInfo c1 : corners) {
 			for (int i = 0; i < corners.size(); i++) {
-				Corner c2 = corners.get(i);
+				CornerIndexInfo c2 = corners.get(i);
 				if (c1.v.equals(c2.v)) continue;
 				if (n.get(c1.v).equals(c2.v)) {
 					c1.n = i;
@@ -188,7 +202,7 @@ public class Graph {
 		 */
 		Map<Integer, Set<Integer>> cornerPointMap = new HashMap<>();
 		for (int i = 0; i < corners.size(); i++) {
-			Corner c = corners.get(i);
+			CornerIndexInfo c = corners.get(i);
 			Set<Integer> set = cornerPointMap.get(v.get(c.v));
 			if (set == null) {
 				set = new HashSet<>();
@@ -200,12 +214,39 @@ public class Graph {
 			Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
 			if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
 			int startSwingIndex = 1;
-			Corner c = corners.get(cIndexArr[0]);
+			CornerIndexInfo c = corners.get(cIndexArr[0]);
 			while (c.s == null) {
 				c.s = cIndexArr[startSwingIndex % cIndexArr.length];
 				c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
 				startSwingIndex++;
 			}
 		}
+	}
+
+	/**
+	 * Gets all edges by skipping over every other one, since we do opposite edges
+	 * right next to the edge.
+	 * 
+	 * @return a list of edges half the size of v.
+	 */
+	public Set<Edge> getEdges() {
+		Set<Edge> toRet = new HashSet<>();
+		for (int i = 0; i < v.size(); i+=2) {
+			Point p1 = points.get(v.get(i));
+			Point p2 = points.get(v.get(n.get(i)));
+			toRet.add(new Edge(p1,p2));
+		}
+		return toRet;
+	}
+	
+	public List<Corner> getCorners() {
+		List<Corner> convertedCorners = new ArrayList<>();
+		for (int i = 0; i < corners.size(); i++) {
+			CornerIndexInfo c = corners.get(i);
+			Edge e1 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
+			Edge e2 = new Edge(points.get(v.get(c.v)), points.get(v.get(p.get(c.v))));
+			convertedCorners.add(new Corner(e1, e2));
+		}
+		return convertedCorners;
 	}
 }
