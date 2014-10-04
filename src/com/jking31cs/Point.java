@@ -5,8 +5,8 @@ package com.jking31cs;
  * @author jking31
  */
 public class Point {
-	public final Float x;
-	public final Float y;
+	public Float x;
+	public Float y;
 	
 	public Point(float x, float y) {
 		this.x = x;
@@ -48,6 +48,7 @@ public class Point {
 			return false;
 		return true;
 	}
+	
 	
 	
 }
