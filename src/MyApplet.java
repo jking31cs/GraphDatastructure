@@ -107,7 +107,7 @@ public class MyApplet extends PApplet {
 	    }
 	    if(addedPoint.x!=-1 && addedPoint.y!=-1)
 	    	g.addVertex(addedPoint);
-	    if (g.points.size()>1)
+	    if (g.points.size()>1 && addedPoint.x!=-1 && addedPoint.y!=-1)
 	    {
 	      Edge addedEdge=new Edge(g.points.get(g.points.size()-2), g.points.get(g.points.size()-1));
 	      //graph.vertices.get(graph.vertices.size()-2).addEdge(addedEdge);
