@@ -1,6 +1,12 @@
 package com.jking31cs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Graph {
 	
@@ -14,7 +20,7 @@ public class Graph {
 	List<Integer> h;      //half edge on the face given
 	List<Integer> f;      //face for given half edge index.
 	
-	List<CornerIndexInfo> corners; //corners on the graph.
+	public List<CornerIndexInfo> corners; //corners on the graph.
 	
 	public Graph() {
 		points = new ArrayList<>();
@@ -55,9 +61,10 @@ public class Graph {
 		 * 3.  Loop through to find next indicies.
 		 * 
 		 * ALGORITHM:
-		 * 		1.  Find the smallest loop, take that as a face.
-		 * 	 	2.  Remove the half edges used for that loop
-		 *		3.  Continue until all half edges are used.
+		 * 	    1.  Find all valid next indices
+		 *      2.  Find which valid next halfedge is the smallest angle (keeping on the sidewalk)
+		 *      3.  Set that new halfedge as the next halfedge, set up next index.
+		 *      4.  Repeat
 		 */
 
 		Integer[] copy = v.toArray(new Integer[v.size()]);
@@ -95,7 +102,6 @@ public class Graph {
 					break;
 				}
 			}
-
 		}
 
 		n = Arrays.asList(nextArr);
@@ -215,13 +221,6 @@ public class Graph {
 		}
 	}
 
-	private boolean arrContains(Integer[] subcopy, Integer index) {
-		for (Integer i : subcopy) {
-			if (index.equals(i)) return true;
-		}
-		return false;
-	}
-
 	private boolean notAllNull(Integer[] copy) {
 		for (Integer i : copy) {
 			if (i != null) return true;
@@ -245,6 +244,10 @@ public class Graph {
 		return toRet;
 	}
 	
+	/**
+	 * Gets all corners as a pair of edges that share a point.
+	 * @return
+	 */
 	public List<Corner> getCorners() {
 		List<Corner> convertedCorners = new ArrayList<>();
 		for (int i = 0; i < corners.size(); i++) {
@@ -254,5 +257,27 @@ public class Graph {
 			convertedCorners.add(new Corner(e1, e2));
 		}
 		return convertedCorners;
+	}
+	
+	/**
+	 * Returns a set of size f that holds a valid path for each face.
+	 * @return
+	 */
+	public Set<List<Edge>> getFacePaths() {
+		Set<List<Edge>> toRet = new HashSet<>();
+		for (Integer startIndex : h) {
+			Integer curIndex = startIndex;
+			Integer nextIndex = n.get(startIndex);
+			List<Edge> list = new ArrayList<>();
+			do {
+				Point start = points.get(v.get(curIndex));
+				Point end = points.get(v.get(nextIndex));
+				list.add(new Edge(start, end));
+				curIndex = nextIndex;
+				nextIndex = n.get(curIndex);
+			} while (curIndex != startIndex);
+			toRet.add(list);
+		}
+		return toRet;
 	}
 }

@@ -102,9 +102,10 @@ public class Vector {
 	public double angleBetween(Vector v) {
 		double dotProduct = normalize().dotProduct(v.normalize());
 
-		if (abs(dotProduct + 1) < .005) {
+		//Floating point conversion makes our dot product slightly too large/small at min/max case.
+		if (abs(dotProduct + 1) < .005) { //In case dotproduct is -1.0000000002, acos returns NaN
 			dotProduct = -1d;
-		} else if (abs(dotProduct - 1) < .005) {
+		} else if (abs(dotProduct - 1) < .005) { //In case dotproduct is 1.000000002, acos returns NaN 
 			dotProduct = 1;
 		}
 
