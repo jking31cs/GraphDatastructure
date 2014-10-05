@@ -5,10 +5,10 @@ package com.jking31cs;
  * @author jking31
  */
 public class Point {
-	public Float x;
-	public Float y;
+	public double x;
+	public double y;
 	
-	public Point(float x, float y) {
+	public Point(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -19,36 +19,26 @@ public class Point {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((x == null) ? 0 : x.hashCode());
-		result = prime * result + ((y == null) ? 0 : y.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Point point = (Point) o;
+
+		if (Double.compare(point.x, x) != 0) return false;
+		if (Double.compare(point.y, y) != 0) return false;
+
+		return true;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Point other = (Point) obj;
-		if (x == null) {
-			if (other.x != null)
-				return false;
-		} else if (!x.equals(other.x))
-			return false;
-		if (y == null) {
-			if (other.y != null)
-				return false;
-		} else if (!y.equals(other.y))
-			return false;
-		return true;
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
 	}
-	
-	
-	
 }

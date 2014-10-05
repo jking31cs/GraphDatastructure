@@ -1,6 +1,6 @@
 package com.jking31cs;
 
-import static processing.core.PApplet.*;
+import static java.lang.Math.*;
 
 /**
  * Unlike a Point, a vector represents more of a direction than a point in space.  This
@@ -8,10 +8,10 @@ import static processing.core.PApplet.*;
  * @author jking31
  */
 public class Vector {
-	public final float x;
-	public final float y;
+	public final double x;
+	public final double y;
   
-	public Vector(float a,float b){
+	public Vector(double a,double b){
 		x=a;
 		y=b;
 	}	
@@ -20,7 +20,7 @@ public class Vector {
 	 * Gets the magnitude of the Vector.
 	 * @return
 	 */
-	public float getMag(){
+	public double getMag(){
 	    return sqrt( x*x + y*y );
 	}
   
@@ -28,7 +28,7 @@ public class Vector {
 	 * Gets the angle of the vector.
 	 * @return
 	 */
-	public float getAngle(){
+	public double getAngle(){
 		return atan2(y,x);
 	}
 	
@@ -37,7 +37,7 @@ public class Vector {
 	 * @return
 	 */
 	public Vector normalize(){
-		return this.mul(1f/getMag());
+		return this.mul(1/getMag());
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Vector {
 	 * @param c
 	 * @return
 	 */
-	public Vector mul(float c){
+	public Vector mul(double c){
 		return new Vector(x*c,y*c);
  	}
 	
@@ -72,7 +72,7 @@ public class Vector {
 	 * @param angle
 	 * @return
 	 */
-	public Vector rotate(float angle) {
+	public Vector rotate(double angle) {
 		return new Vector(
 			cos(angle)*x - sin(angle)*y,
 			sin(angle)*x + cos(angle)*y
@@ -84,7 +84,7 @@ public class Vector {
 	 * @param v
 	 * @return
 	 */
-	public float dotProduct(Vector v) {
+	public double dotProduct(Vector v) {
 		return v.x*x + v.y*y;
 	}
 	
@@ -95,12 +95,21 @@ public class Vector {
 	 * @param v
 	 * @return
 	 */
-	public float vectorProduct(Vector v) {
+	public double vectorProduct(Vector v) {
 		return x*v.y - y*v.x;
 	}
 	
-	public float angleBetween(Vector v) {
-		float angle = acos(normalize().dotProduct(v.normalize()));
+	public double angleBetween(Vector v) {
+		double dotProduct = normalize().dotProduct(v.normalize());
+
+		if (abs(dotProduct + 1) < .005) {
+			dotProduct = -1d;
+		} else if (abs(dotProduct - 1) < .005) {
+			dotProduct = 1;
+		}
+
+
+		double angle = Math.acos(dotProduct);
 	       
        // Check the current rotation of vectors
        if(this.vectorProduct(v) < 0) {
@@ -110,29 +119,26 @@ public class Vector {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Float.floatToIntBits(x);
-		result = prime * result + Float.floatToIntBits(y);
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Vector vector = (Vector) o;
+
+		if (Double.compare(vector.x, x) != 0) return false;
+		if (Double.compare(vector.y, y) != 0) return false;
+
+		return true;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Vector other = (Vector) obj;
-		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
-			return false;
-		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
-			return false;
-		return true;
+	public int hashCode() {
+		int result;
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		return result;
 	}
-	
-	
-} 
+}

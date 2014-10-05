@@ -58,7 +58,7 @@ public class MyApplet extends PApplet {
 		  {
 		    if (g.points.size()>0)
 		    {
-		      Point tempPoint=new Point(mouse.x, mouse.y);
+		      Point tempPoint=new Point(1d * mouse.x, 1d *mouse.y);
 		      drawPoint(tempPoint,-1);
 		      Edge tempEdge=new Edge(g.points.get(g.points.size()-1), tempPoint);
 		      drawEdge(tempEdge);
@@ -68,7 +68,7 @@ public class MyApplet extends PApplet {
 		  {
 		    if (g.points.size()>0 && editModeLeastFound!=-1)
 		    {
-		      Point tempPoint=new Point(mouse.x, mouse.y);
+		      Point tempPoint=new Point(1d * mouse.x, 1d *mouse.y);
 		      drawPoint(tempPoint,-1);
 		      Edge tempEdge=new Edge(g.points.get(editModeLeastFound), tempPoint);
 		      drawEdge(tempEdge);
@@ -95,15 +95,15 @@ public class MyApplet extends PApplet {
 	      leastFound=findClickedVertex(20);
 	      if (leastFound!=-1)
 	      {
-	        addedPoint=new Point(-1,-1);
+	        addedPoint=new Point(-1d,-1d);
 	        g.addEdge(new Edge(g.points.get(g.points.size()-1), g.points.get(leastFound)));
 	      } else
 	      {
-	        addedPoint=new Point(mouse.x, mouse.y);
+	        addedPoint=new Point(1d * mouse.x, 1d *mouse.y);
 	      }
 	    } else
 	    {
-	    	addedPoint=new Point(mouse.x, mouse.y);
+	    	addedPoint=new Point(1d * mouse.x, 1d *mouse.y);
 	    }
 	    if(addedPoint.x!=-1 && addedPoint.y!=-1)
 	    	g.addVertex(addedPoint);
@@ -128,7 +128,7 @@ public class MyApplet extends PApplet {
 	      int tempLeastFound=findClickedVertex(20);
 	      if (tempLeastFound==-1)
 	      {
-	        g.addVertex(new Point(mouse.x, mouse.y));
+	        g.addVertex(new Point(1d * mouse.x, 1d * mouse.y));
 	        g.addEdge(new Edge(g.points.get(editModeLeastFound), g.points.get(g.points.size()-1)));
 	      } else
 	      {
@@ -193,15 +193,18 @@ public class MyApplet extends PApplet {
 	public void drawPoint(Point p,int index)
 	  {
 	    fill(0,255,0);
-	    ellipse(p.x,p.y,20,20);
+		float x = (float) p.x,
+		       y = (float) p.y;
+	    ellipse(x, y,20,20);
 	    fill(0);
-	    text(""+index,p.x-5,p.y+5);
+
+	    text(""+index, x -5, y +5);
 	    
 	  }
 	public void drawEdge(Edge e)
 	  {
 	    stroke(0);
-	    line(e.p1.x, e.p1.y, e.p2.x, e.p2.y);
+	    line((float) e.p1.x, (float) e.p1.y, (float) e.p2.x, (float) e.p2.y);
 	  }
 	
 	//This function looks at the current mouse position and returns the index of the vertex on it(distance to register is set to "reg")
@@ -213,7 +216,7 @@ public class MyApplet extends PApplet {
 	  //Loop to find which vertex is shorest distance from the click
 	  for (leastIndex=0; leastIndex<g.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector(g.points.get(leastIndex).x,g.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) g.points.get(leastIndex).x,(float) g.points.get(leastIndex).y);
 	    dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist<reg)
@@ -234,7 +237,7 @@ public class MyApplet extends PApplet {
 	  //Loop to find which vertex is shorest distance from the click
 	  for (leastIndex=0; leastIndex<g.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector(g.points.get(leastIndex).x,g.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) g.points.get(leastIndex).x,(float) g.points.get(leastIndex).y);
 		dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist>reg1 && dist<reg2)

@@ -11,7 +11,6 @@ import java.util.List;
 public class GraphTest {
 
 	@Test
-	@Ignore
 	public void testAddVertices() {
 		Graph g = new Graph();
 		
@@ -46,8 +45,8 @@ public class GraphTest {
 		g.addEdge(new Edge(p[3],p[4]));
 		g.addEdge(new Edge(p[4],p[0]));
 
-//		assertEquals(2, g.h.size());
-//		assertEquals(10, g.corners.size());
+		assertEquals(2, g.h.size());
+		assertEquals(10, g.corners.size());
 
 		g.addEdge(new Edge(p[1], p[4]));
 
@@ -57,7 +56,6 @@ public class GraphTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testDanglingEdge() {
 		Graph g = new Graph();
 		Point p1 = new Point(50,50);
@@ -91,7 +89,6 @@ public class GraphTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testAddEdges() {
 		Graph g = new Graph();
 		Point p1 = new Point(50,50);
@@ -125,7 +122,7 @@ public class GraphTest {
 		
 		assertTrue(g.f.get(0).equals(g.f.get(2)) && g.f.get(2).equals(g.f.get(4)));
 		assertTrue(g.f.get(1).equals(g.f.get(3)) && g.f.get(3).equals(g.f.get(5)));
-//		assertFalse(g.f.get(0).equals(g.f.get(1)));
+		assertFalse(g.f.get(0).equals(g.f.get(1)));
 		
 		assertEquals(2, g.h.size());
 
