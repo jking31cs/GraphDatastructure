@@ -12,6 +12,7 @@ import processing.core.*;
 public class MyApplet extends PApplet {
 	
 	Graph g;
+	Graph g2;
 	PVector mouse;
 	PVector mouseClicked;
 	boolean drawMode;
@@ -29,20 +30,21 @@ public class MyApplet extends PApplet {
 		
 		g = new Graph();
 		/*
+		g2=new Graph();
 		Point p1 = new Point(100,100);
-		g.addVertex(p1);
+		g2.addVertex(p1);
 		Point p2 = new Point(300,300);
-		g.addVertex(p2);
+		g2.addVertex(p2);
 		Point p3 = new Point(100,200);
-		g.addVertex(p3);
+		g2.addVertex(p3);
 		Point p4 = new Point(30,75);
-		g.addVertex(p4);
+		g2.addVertex(p4);
 		
-		g.addEdge(new Edge(p1,p2));
-		g.addEdge(new Edge(p2,p3));
-		g.addEdge(new Edge(p3,p1));
-		g.addEdge(new Edge(p1,p4));
-		
+		g2.addEdge(new Edge(p1,p2));
+		g2.addEdge(new Edge(p2,p3));
+		g2.addEdge(new Edge(p3,p1));
+		g2.addEdge(new Edge(p1,p4));
+		g2.addEdge(new Edge(p2,p4));
 		*/
 		
 	}
@@ -51,14 +53,14 @@ public class MyApplet extends PApplet {
 	{
 		background(255);
 		mouse=new PVector(mouseX, mouseY);
-		drawGraph();
-		
+		drawGraph(g);
+		//drawGraph(g2);
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
 		  {
 		    if (g.points.size()>0)
 		    {
-		      Point tempPoint=new Point(1d * mouse.x, 1d *mouse.y);
+		      Point tempPoint=new Point(mouse.x, mouse.y);
 		      drawPoint(tempPoint,-1);
 		      Edge tempEdge=new Edge(g.points.get(g.points.size()-1), tempPoint);
 		      drawEdge(tempEdge);
@@ -68,7 +70,7 @@ public class MyApplet extends PApplet {
 		  {
 		    if (g.points.size()>0 && editModeLeastFound!=-1)
 		    {
-		      Point tempPoint=new Point(1d * mouse.x, 1d *mouse.y);
+		      Point tempPoint=new Point(mouse.x, mouse.y);
 		      drawPoint(tempPoint,-1);
 		      Edge tempEdge=new Edge(g.points.get(editModeLeastFound), tempPoint);
 		      drawEdge(tempEdge);
@@ -95,15 +97,15 @@ public class MyApplet extends PApplet {
 	      leastFound=findClickedVertex(20);
 	      if (leastFound!=-1)
 	      {
-	        addedPoint=new Point(-1d,-1d);
+	        addedPoint=new Point(-1,-1);
 	        g.addEdge(new Edge(g.points.get(g.points.size()-1), g.points.get(leastFound)));
 	      } else
 	      {
-	        addedPoint=new Point(1d * mouse.x, 1d *mouse.y);
+	        addedPoint=new Point(mouse.x, mouse.y);
 	      }
 	    } else
 	    {
-	    	addedPoint=new Point(1d * mouse.x, 1d *mouse.y);
+	    	addedPoint=new Point(mouse.x, mouse.y);
 	    }
 	    if(addedPoint.x!=-1 && addedPoint.y!=-1)
 	    	g.addVertex(addedPoint);
@@ -128,7 +130,7 @@ public class MyApplet extends PApplet {
 	      int tempLeastFound=findClickedVertex(20);
 	      if (tempLeastFound==-1)
 	      {
-	        g.addVertex(new Point(1d * mouse.x, 1d * mouse.y));
+	        g.addVertex(new Point(mouse.x, mouse.y));
 	        g.addEdge(new Edge(g.points.get(editModeLeastFound), g.points.get(g.points.size()-1)));
 	      } else
 	      {
@@ -178,14 +180,14 @@ public class MyApplet extends PApplet {
 	/*
 	 * ALL functions beyond this point are for drawing pusposes 
 	 */
-	private void drawGraph() {
+	private void drawGraph(Graph g1) {
 		int i = 0;
 		//Draw Edges
-		for (Edge e : g.getEdges()) {
+		for (Edge e : g1.getEdges()) {
 			drawEdge(e);
 		}	
 		//Draw points.
-		for (Point p : g.points) {	
+		for (Point p : g1.points) {	
 			drawPoint(p,i);
 			i++;
 		}		
