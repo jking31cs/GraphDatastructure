@@ -54,59 +54,75 @@ public class Graph {
 		/*
 		 * 3.  Loop through to find next indicies.
 		 * 
-		 * ALGORITHM:  Find opposite index to point we're on.  
-		 * 			   Look through all starting points that share an index with opposite.
-		 *             If none exist, go with opposite, otherwise first one we encounter.
+		 * ALGORITHM:
+		 * 		1.  Find the smallest loop, take that as a face.
+		 * 	 	2.  Remove the half edges used for that loop
+		 *		3.  Continue until all half edges are used.
 		 */
-		Integer curIndex = 0;
-		Integer target = 0;
-		Integer nextIndex = null;
-		Integer[] nextArr = new Integer[v.size()];
+
 		Integer[] copy = v.toArray(new Integer[v.size()]);
-		copy[curIndex] = null;
-		while (true) {
-			nextIndex = o.get(curIndex);
-			boolean found = false;
-			boolean startingPointFound = false;
-			for (int j = 0; j < v.size(); j++) {
-				if (j == nextIndex) continue;
-				if (v.get(j) == v.get(nextIndex)) {
-					
-					//Check if already found given next index.
-					if (v.get(j) == v.get(target)) {
-						if (copy[j] == null || copy[o.get(j)] == null) {
-							startingPointFound = true;
-							continue;							
+		Integer[] nextArr = new Integer[v.size()];
+		while (notAllNull(copy)) {
+			List<Integer> minLoop = null;
+			int minsize = Integer.MAX_VALUE;
+			for (int pindex = 0; pindex <= points.size(); pindex++) {
+				Integer[] subcopy = Arrays.copyOf(copy, copy.length);
+				for (int vindex = 0; vindex < v.size(); vindex++) {
+					if (!v.get(vindex).equals(pindex)) continue;
+					Integer startIndex = vindex;
+					Integer curIndex = startIndex;
+					Integer nextIndex = o.get(startIndex);
+					List<Integer> path = new ArrayList<>();
+					path.add(startIndex);
+					subcopy[curIndex] = null;
+					while (notAllNull(subcopy)) {
+
+						boolean found = false;
+						for (int i = 0; i < v.size(); i++) {
+							if (i == curIndex) continue;
+							if (subcopy[i] == null) continue;
+							if (subcopy[i].equals(v.get(nextIndex))) {
+								if (o.get(i).equals(curIndex)) {
+									continue;
+								}
+								path.add(i);
+								curIndex = i;
+								subcopy[i] = null;
+								nextIndex = o.get(i);
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+//							path.add(nextIndex);
+//							curIndex = nextIndex;
+//							subcopy[curIndex] = null;
+//							nextIndex = o.get(curIndex);
+							break;
+						}
+						if (v.get(nextIndex).equals(v.get(startIndex))) {
+//							if (path.size() == 2 && notAllNull(subcopy)) continue; //TODO this is breaking things.
+							if (minsize > path.size()) {
+								minsize = path.size();
+								minLoop = path;
+							}
+							path = new ArrayList<>();
 						}
 					}
-					
-					nextArr[curIndex] = j;
-					curIndex = j;
-					copy[curIndex] = null;
-					found = true;
-					break;
 				}
 			}
-			if (startingPointFound && !found) {
-				nextArr[curIndex] = target;
-				curIndex = target;
-				copy[curIndex] = null;
-			} else if (!found) {
-				nextArr[curIndex] = nextIndex;
-				curIndex = nextIndex;
-				copy[curIndex] = null;
-			}
-			if (curIndex == target) {
-				Integer nextPoint = null;
-				while (nextPoint == null) {
-					nextPoint = copy[curIndex];
-					if (nextPoint == null) curIndex++;						
-					if (curIndex >= v.size()) break;
+			//We now have a minimum face of the leftover edges.
+			if (minLoop != null) {
+				for (int i = 0; i < minLoop.size(); i++) {
+					Integer j = minLoop.get(i);
+					nextArr[j] = minLoop.get((i+1)%minsize);
+					copy[j] = null;
 				}
-				if (nextPoint == null) break;
-				target = curIndex;
+			} else {
+				break;
 			}
 		}
+
 		n = Arrays.asList(nextArr);
 
 		/*
@@ -115,13 +131,13 @@ public class Graph {
 		p = new ArrayList<>(n.size());
 		for (int searchIndex = 0; searchIndex < n.size(); searchIndex++) {
 			for (int i = 0; i < n.size(); i++) {
-				if (n.get(i) == searchIndex) {
+				if (n.get(i) != null && n.get(i) == searchIndex) {
 					p.add(searchIndex, i);
 					break;
-				}				
+				}
 			}
 		}
-		
+
 		/*
 		 * Finding faces with following algorithm.
 		 * 
@@ -130,97 +146,112 @@ public class Graph {
 		 * 3.  Repeat until all half edges are gone.
 		 */
 		
-		copy = v.toArray(new Integer[v.size()]);
-		boolean done = false;
-		int faceCount = 0;
-		Integer[] faceArr = new Integer[v.size()];
-		while (!done) {
-			int index = 0;
-			Integer startPoint = null;
-			while (startPoint == null) {
-				startPoint = copy[index];
-				if (startPoint == null) index++;
-				if (index >= copy.length) {
-					done = true;
-					break;
-				}
-			}
-			if (startPoint == null) {
-				break;
-			}
-			faceArr[index] = faceCount;
-			copy[index] = null;
-			nextIndex = n.get(index);
-			while (nextIndex != index) {
-				faceArr[nextIndex] = faceCount;
-				copy[nextIndex] = null;
-				nextIndex = n.get(nextIndex);
-			}
-			faceCount++;
-		}
-		f = Arrays.asList(faceArr);
-		
-		/*
-		 * Find half edge on given face.
-		 */
-		Set<Integer> faceIndices = new HashSet<>(f);
-		h = new ArrayList<>();
-		for (int i = 0; i < f.size(); i++) {
-			if (faceIndices.contains(f.get(i))) {
-				h.add(f.get(i), i);
-				faceIndices.remove(f.get(i));
-			}
-		}
+//		copy = v.toArray(new Integer[v.size()]);
+//		boolean done = false;
+//		int faceCount = 0;
+//		Integer[] faceArr = new Integer[v.size()];
+//		Integer nextIndex;
+//		while (!done) {
+//			int index = 0;
+//			Integer startPoint = null;
+//			while (startPoint == null) {
+//				startPoint = copy[index];
+//				if (startPoint == null) index++;
+//				if (index >= copy.length) {
+//					done = true;
+//					break;
+//				}
+//			}
+//			if (startPoint == null) {
+//				break;
+//			}
+//			faceArr[index] = faceCount;
+//			copy[index] = null;
+//			nextIndex = n.get(index);
+//			while (nextIndex != index) {
+//				faceArr[nextIndex] = faceCount;
+//				copy[nextIndex] = null;
+//				nextIndex = n.get(nextIndex);
+//			}
+//			faceCount++;
+//		}
+//		f = Arrays.asList(faceArr);
+//
+//		/*
+//		 * Find half edge on given face.
+//		 */
+//		Set<Integer> faceIndices = new HashSet<>(f);
+//		h = new ArrayList<>();
+//		for (int i = 0; i < f.size(); i++) {
+//			if (faceIndices.contains(f.get(i))) {
+//				h.add(f.get(i), i);
+//				faceIndices.remove(f.get(i));
+//			}
+//		}
+//
+//		corners = new ArrayList<>();
+//		/*
+//		 * Find the corners
+//		 *
+//		 * 1.  For every edge there's a corner there.
+//		 */
+//		for (int j = 0; j < v.size(); j++) {
+//			CornerIndexInfo c = new CornerIndexInfo();
+//			c.v = j;
+//			corners.add(c);
+//		}
+//		/*
+//		 * 2.  Calculate next corners.
+//		 */
+//		for (CornerIndexInfo c1 : corners) {
+//			for (int i = 0; i < corners.size(); i++) {
+//				CornerIndexInfo c2 = corners.get(i);
+//				if (c1.v.equals(c2.v)) continue;
+//				if (n.get(c1.v).equals(c2.v)) {
+//					c1.n = i;
+//				}
+//			}
+//		}
+//		/*
+//		 * 3.  Calculate swing corners.  We do thing by finding all corners on same point, then
+//		 * just setting it in motion.  IE corners 0,1,2 are all point p.  The swing in order will
+//		 * be 1,2,0.
+//		 */
+//		Map<Integer, Set<Integer>> cornerPointMap = new HashMap<>();
+//		for (int i = 0; i < corners.size(); i++) {
+//			CornerIndexInfo c = corners.get(i);
+//			Set<Integer> set = cornerPointMap.get(v.get(c.v));
+//			if (set == null) {
+//				set = new HashSet<>();
+//			}
+//			set.add(c.v);
+//			cornerPointMap.put(v.get(c.v), set);
+//		}
+//		for (Set<Integer> cIndicies : cornerPointMap.values()) {
+//			Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
+//			if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
+//			int startSwingIndex = 1;
+//			CornerIndexInfo c = corners.get(cIndexArr[0]);
+//			while (c.s == null) {
+//				c.s = cIndexArr[startSwingIndex % cIndexArr.length];
+//				c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
+//				startSwingIndex++;
+//			}
+//		}
+	}
 
-		corners = new ArrayList<>();
-		/*
-		 * Find the corners
-		 *
-		 * 1.  For every edge there's a corner there.
-		 */
-		for (int j = 0; j < v.size(); j++) {
-			CornerIndexInfo c = new CornerIndexInfo();
-			c.v = j;
-			corners.add(c);
+	private boolean arrContains(Integer[] subcopy, Integer index) {
+		for (Integer i : subcopy) {
+			if (index.equals(i)) return true;
 		}
-		/*
-		 * 2.  Calculate next corners.
-		 */
-		for (CornerIndexInfo c1 : corners) {
-			for (int i = 0; i < corners.size(); i++) {
-				CornerIndexInfo c2 = corners.get(i);
-				if (c1.v.equals(c2.v)) continue;
-				if (n.get(c1.v).equals(c2.v)) {
-					c1.n = i;
-				}
-			}
+		return false;
+	}
+
+	private boolean notAllNull(Integer[] copy) {
+		for (Integer i : copy) {
+			if (i != null) return true;
 		}
-		/*
-		 * 3.  Calculate swing corners.  We do thing by finding all corners on same point, then
-		 * just setting it in motion.  IE corners 0,1,2 are all point p.  The swing in order will
-		 * be 1,2,0.
-		 */
-		Map<Integer, Set<Integer>> cornerPointMap = new HashMap<>();
-		for (int i = 0; i < corners.size(); i++) {
-			CornerIndexInfo c = corners.get(i);
-			Set<Integer> set = cornerPointMap.get(v.get(c.v));
-			if (set == null) {
-				set = new HashSet<>();
-			}
-			set.add(c.v);
-			cornerPointMap.put(v.get(c.v), set);
-		}
-		for (Set<Integer> cIndicies : cornerPointMap.values()) {
-			Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
-			if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
-			int startSwingIndex = 1;
-			CornerIndexInfo c = corners.get(cIndexArr[0]);
-			while (c.s == null) {
-				c.s = cIndexArr[startSwingIndex % cIndexArr.length];
-				c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
-				startSwingIndex++;
-			}
-		}
+		return false;
 	}
 
 	/**
