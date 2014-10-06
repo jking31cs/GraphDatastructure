@@ -29,6 +29,13 @@ public class MyApplet extends PApplet {
 	ArrayList<Integer> colorR=new ArrayList<>();
 	ArrayList<Integer> colorG=new ArrayList<>();
 	ArrayList<Integer> colorB=new ArrayList<>();
+	
+	//Instrction's and Pictures
+	PImage bose;
+	PImage bobby;
+	String title="CS 6491, Fall 2014, Title: Graph Datastructure";
+	String instructions="Keys: E: Edit Mode(Click near Vertex to create new one) S:Toggle sidewalks in Edit Mode C:Toggle Corners in Edit Mode";
+	String names="Bobby King & Arindam Bose";
 	@Override
 	public void setup() {
 		
@@ -39,6 +46,8 @@ public class MyApplet extends PApplet {
 		showSideWalks=false;
 		showCorners=false;
 		
+		bose=loadImage("pics/portrait_bose.jpg");
+		bobby=loadImage("pics/portrait_bobby.png");
 	
 		g = new Graph();
 		for(int i=0;i<50;i++)
@@ -72,7 +81,8 @@ public class MyApplet extends PApplet {
 		background(255);
 		mouse=new PVector(mouseX, mouseY);
 		drawGraph(g);
-
+		
+		drawStuff();
 		//drawGraph(g2);
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
@@ -138,26 +148,26 @@ public class MyApplet extends PApplet {
 
 	  if (editMode)
 	  {
-	    if (editModeClickCount==0)
-	    {
-	      editModeLeastFound=findClickedVertex(20, 40);
-	    }
-	    if (editModeClickCount>0)
-	    {
+			if (!showCorners) {
+				if (editModeClickCount == 0) {
+					editModeLeastFound = findClickedVertex(20, 40);
+				}
+				if (editModeClickCount > 0) {
 
-	      //println("called");
-	      int tempLeastFound=findClickedVertex(20);
-	      if (tempLeastFound==-1)
-	      {
-	        g.addVertex(new Point(mouse.x, mouse.y));
-	        g.addEdge(new Edge(g.points.get(editModeLeastFound), g.points.get(g.points.size()-1)));
-	      } else
-	      {
-	        g.addEdge(new Edge(g.points.get(editModeLeastFound), g.points.get(tempLeastFound)));
-	      }
-	      editModeClickCount=0;
-	      editModeLeastFound=-1;
-	    }
+					// println("called");
+					int tempLeastFound = findClickedVertex(20);
+					if (tempLeastFound == -1) {
+						g.addVertex(new Point(mouse.x, mouse.y));
+						g.addEdge(new Edge(g.points.get(editModeLeastFound),
+								g.points.get(g.points.size() - 1)));
+					} else {
+						g.addEdge(new Edge(g.points.get(editModeLeastFound),
+								g.points.get(tempLeastFound)));
+					}
+					editModeClickCount = 0;
+					editModeLeastFound = -1;
+				}
+			}
 	    if(showCorners){
 	    	List<Corner> allCorners= g.getCorners();
 	    	Corner minCorner=allCorners.get(0);
@@ -340,6 +350,16 @@ public class MyApplet extends PApplet {
 	  return leastFound;
 	}
 	
+	
+	void drawStuff()
+	{
+	  image(bose,700,20,100,100);
+	  image(bobby,595,20,100,100);
+	  fill(0);
+	  text(title,5,10);
+	  text(instructions,5,550);
+	  text(names,600,10);
+	}
 	
 
 	public static void main(String[] args) {
