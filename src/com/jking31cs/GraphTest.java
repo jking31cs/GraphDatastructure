@@ -52,7 +52,6 @@ public class GraphTest {
 		assertEquals(12, g.corners.size());
 		
 		assertEquals(3, g.getFacePaths().size());
-		System.out.println("yay");
 	}
 	
 	@Test
@@ -126,6 +125,35 @@ public class GraphTest {
 		
 		assertEquals(2, g.h.size());
 
+	}
+
+	@Test
+	public void testOuterFaceDetection() {
+		Graph g = new Graph();
+		Point p0 = new Point(225, 100);
+		g.addVertex(p0);
+		Point p1 = new Point(300, 350);
+		g.addVertex(p1);
+		Point p2 = new Point(150, 350);
+		g.addVertex(p2);
+		Point p3 = new Point(225, 150);
+		g.addVertex(p3);
+		Point p4 = new Point(275, 275);
+		g.addVertex(p4);
+		Point p5 = new Point(175, 275);
+		g.addVertex(p5);
+
+		g.addEdge(new Edge(p0, p1));
+		g.addEdge(new Edge(p1, p2));
+		g.addEdge(new Edge(p2, p0));
+		g.addEdge(new Edge(p0, p3));
+		g.addEdge(new Edge(p3, p4));
+		g.addEdge(new Edge(p4, p5));
+		g.addEdge(new Edge(p5, p3));
+
+		assertEquals(3, g.getFacePaths().size());
+
+		assertEquals((Integer) 0, g.getOuterFaceIndex());
 	}
 
 }

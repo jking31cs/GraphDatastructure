@@ -280,4 +280,33 @@ public class Graph {
 		}
 		return toRet;
 	}
+
+	/**
+	 * Finds out the outer face by taking the sum of the following equation per edge in the face:
+	 *
+	 * 		(p2.x - p1.x)(p1.y + p2.y)
+	 *
+	 * If the sum of all edges with this equation is negative, we have a clockwise orientation, thus is an outer face.	
+	 */
+	public Integer getOuterFaceIndex() {
+		for (int face = 0; face < f.size(); face++) {
+			Integer startIndex = f.get(face);
+			Integer curIndex = startIndex;
+			Integer nextIndex = n.get(curIndex);
+			int sum = 0;
+			do {
+				Point p_1 = points.get(v.get(curIndex));
+				Point p_2 = points.get(v.get(nextIndex));
+				sum += (p_2.x-p_1.x)*(p_2.y+p_1.y);
+				curIndex = nextIndex;
+				nextIndex = n.get(nextIndex);
+
+			} while (!startIndex.equals(curIndex));
+
+			if (sum < 0) return face;
+		}
+		throw new IllegalStateException("Somehow this has no outer face.");
+
+
+	}
 }
