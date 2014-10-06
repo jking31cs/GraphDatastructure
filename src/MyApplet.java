@@ -35,6 +35,7 @@ public class MyApplet extends PApplet {
 	PImage bobby;
 	String title="CS 6491, Fall 2014, Title: Graph Datastructure";
 	String instructions="Keys: E: Edit Mode(Click near Vertex to create new one) S:Toggle sidewalks in Edit Mode C:Toggle Corners in Edit Mode";
+	String legend="Legend in Corner Mode:   Black:Current Corner Blue:Next Corner Green: Swing Corner Red:Unswing Corner";
 	String names="Bobby King & Arindam Bose";
 	@Override
 	public void setup() {
@@ -358,6 +359,7 @@ public class MyApplet extends PApplet {
 	  fill(0);
 	  text(title,5,10);
 	  text(instructions,5,550);
+	  text(legend,5,570);
 	  text(names,600,10);
 	}
 	
