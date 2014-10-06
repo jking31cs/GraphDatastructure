@@ -284,13 +284,29 @@ public class Graph {
 	
 	/**
 	 * Returns Lists of corners in a loop stored in a HashSet, useful for drawing sidewalk's
-	 * @param start
 	 * @return 
 	 */
-	/*public Set<List<Corner>> getSideWalkPaths(){
-		Set<List<Corner>> toRet = new HashSet<>();
-		for(CornerIndexInfo startIndex : )
-	}*/
+	public Set<ArrayList<Corner>> getSideWalkPaths(){
+		Set<ArrayList<Corner>> toRet = new HashSet<>();
+		for(CornerIndexInfo startIndex : corners){
+			if(!startIndex.isVisited){
+				ArrayList<Corner> sideWalkLoop=new ArrayList<>();
+				sideWalkLoop.add(getCornerFromIndex(startIndex));
+				startIndex.visit();
+				CornerIndexInfo next=corners.get(startIndex.n);
+				while(!startIndex.equals(next)){
+					sideWalkLoop.add(getCornerFromIndex(next));
+					next.visit();
+					next=corners.get(next.n);
+				}
+				toRet.add(sideWalkLoop);
+			}
+		}
+		for(CornerIndexInfo resetVisited : corners){
+			resetVisited.isVisited=false;
+		}
+		return toRet;
+	}
 	
 	/**
 	 * Returns a set of size f that holds a valid path for each face.

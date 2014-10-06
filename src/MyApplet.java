@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.*;
 
 import com.jking31cs.Corner;
 import com.jking31cs.Edge;
@@ -17,10 +17,15 @@ public class MyApplet extends PApplet {
 	PVector mouseClicked;
 	boolean drawMode;
 	boolean editMode;
+	boolean showSideWalks;
 	int editModeClickCount=0;
 	int editModeLeastFound=-1;
 	int leastFound;
 	
+	//Randomized color lookup table
+	ArrayList<Integer> colorR=new ArrayList<>();
+	ArrayList<Integer> colorG=new ArrayList<>();
+	ArrayList<Integer> colorB=new ArrayList<>();
 	@Override
 	public void setup() {
 		
@@ -28,8 +33,14 @@ public class MyApplet extends PApplet {
 
 		drawMode=true;
 		editMode=false;
-		
+		showSideWalks=false;
 		g = new Graph();
+		for(int i=0;i<50;i++)
+		{
+			colorR.add((int)random(0,255));
+			colorG.add((int)random(0,30));
+			colorB.add((int)random(0,255));
+		}
 		/*
 		g2=new Graph();
 		Point p1 = new Point(100,100);
@@ -158,6 +169,10 @@ public class MyApplet extends PApplet {
 	    drawMode=true;
 	    editMode=false;
 	  }
+	  if (key == 's')
+	  {
+	    showSideWalks=!showSideWalks;
+	  }
 	}
 	
 	public void mouseDragged()
@@ -192,13 +207,29 @@ public class MyApplet extends PApplet {
 			drawPoint(p,i);
 			i++;
 		}	
-		//Draw all corners
-		if (editMode) {
+		
+		if (editMode && showSideWalks) {
+			//Draw all corners
 			for (Corner c : g1.getCorners()) {
 				drawCorner(c);
 			}
+			
+			//Draw all sidewalks
+			int z=0;
+			for (ArrayList<Corner> loop : g1.getSideWalkPaths()){
+			
+				int j=0;			
+				stroke(colorR.get(z),colorG.get(z),colorB.get(z));
+				z++;		
+				for(j=0;j<loop.size()-1;j++){
+					line((float)loop.get(j).getPosition(20).x,(float)loop.get(j).getPosition(20).y,(float)loop.get(j+1).getPosition(20).x,(float)loop.get(j+1).getPosition(20).y);
+				}
+				line((float)loop.get(j).getPosition(20).x,(float)loop.get(j).getPosition(20).y,(float)loop.get(0).getPosition(20).x,(float)loop.get(0).getPosition(20).y);
+				stroke(0);
+				
+			}
 			/*println(g1.getCorners().size());
-			Corner c=g1.getCorners().get(1);
+			Corner c=g1.getCornerFromIndex(g1.corners.get(1));
 			drawCorner(c);
 			fill(0,0,255);
 			drawCorner(g1.nextCorner(g1.corners.get(1)));*/

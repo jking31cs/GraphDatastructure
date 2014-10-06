@@ -4,9 +4,11 @@ public class CornerIndexInfo {
 	public Integer v;  //Half Edge index associated with the corner.
 	public Integer n;  //Next Corner index
 	public Integer s;  //Swing Corner (another corner on same vertex) index.
+	public Boolean isVisited;
 
     public CornerIndexInfo() {
         this(null,null,null);
+        isVisited=false;
     }
 
     /**
@@ -16,6 +18,11 @@ public class CornerIndexInfo {
         this.v = v;
         this.n = n;
         this.s = s;
+        isVisited=false;
+    }
+    
+    public void visit(){
+    	isVisited=true;
     }
 
     @Override
