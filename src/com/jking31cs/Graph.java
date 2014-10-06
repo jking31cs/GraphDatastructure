@@ -252,12 +252,45 @@ public class Graph {
 		List<Corner> convertedCorners = new ArrayList<>();
 		for (int i = 0; i < corners.size(); i++) {
 			CornerIndexInfo c = corners.get(i);
-			Edge e1 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
-			Edge e2 = new Edge(points.get(v.get(c.v)), points.get(v.get(p.get(c.v))));
+			Edge e2 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
+			Edge e1 = new Edge(points.get(v.get(p.get(c.v))),points.get(v.get(c.v)));
 			convertedCorners.add(new Corner(e1, e2));
 		}
 		return convertedCorners;
 	}
+	
+	/**
+	 * Given a corner gets the next corner in clockwise direction
+	 * @param c
+	 * @return
+	 */
+	public Corner nextCorner(CornerIndexInfo c){
+		Edge e1 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
+		Edge e2 = new Edge(points.get(v.get(n.get(c.v))), points.get(v.get(n.get(corners.get(c.n).v))));
+		return new Corner(e1,e2);
+	}
+	
+	/**
+	 * Given CornerIndexInfo returns a Corner object for drawing
+	 * @param start
+	 * @return 
+	 */
+	public Corner getCornerFromIndex(CornerIndexInfo c){
+		Edge e2 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
+		Edge e1 = new Edge(points.get(v.get(p.get(c.v))),points.get(v.get(c.v)));
+		return new Corner(e1,e2);
+	}
+	
+	
+	/**
+	 * Returns Lists of corners in a loop stored in a HashSet, useful for drawing sidewalk's
+	 * @param start
+	 * @return 
+	 */
+	/*public Set<List<Corner>> getSideWalkPaths(){
+		Set<List<Corner>> toRet = new HashSet<>();
+		for(CornerIndexInfo startIndex : )
+	}*/
 	
 	/**
 	 * Returns a set of size f that holds a valid path for each face.

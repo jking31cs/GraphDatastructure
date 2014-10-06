@@ -30,7 +30,7 @@ public class Corner {
 		throw new IllegalStateException("Edges in corner must share a point");
 	}
 	
-	public Edge bisector() {
+	/*public Edge bisector() {
 		
 		if (e1.p1.equals(e2.p1)) {
 			Point commonPoint = new Point(e1.p1.x, e1.p1.y);
@@ -66,6 +66,32 @@ public class Corner {
 		
 		throw new IllegalStateException("Edges in corner must share a point");
 		
+	}
+	
+	/**
+	 * Reworked bisector() to return the bisector as a Vector instead of an edge,
+	 * also changed the bisector formula to ||v1||*v2 + ||v2||*v1 + more HAX please read e-mail
+	 */
+	
+	public Vector bisector()
+	{
+		if (e1.p2.equals(e2.p1)){
+			Vector v1 = e1.asVec();
+			Vector v2 = e2.asVec();
+			Vector bi = v1.mul(v2.getMag()).add(v2.mul(v1.getMag()));
+			return bi.mul(-1);
+		}
+		throw new IllegalStateException("Edges in corner must share a point");
+	}
+	
+	/**
+	 * Uses the new bisector function and returns the position(at a distance of offset) of the corner as a vector.
+	 */
+	public Vector getPosition(int offset)
+	{
+		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y);
+		Vector bisectorVector=bisector().normalize().mul(offset).rotate(Math.PI/2);
+		return commonPoint.add(bisectorVector);
 	}
 
 	@Override

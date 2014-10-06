@@ -20,6 +20,7 @@ public class MyApplet extends PApplet {
 	int editModeClickCount=0;
 	int editModeLeastFound=-1;
 	int leastFound;
+	
 	@Override
 	public void setup() {
 		
@@ -54,6 +55,7 @@ public class MyApplet extends PApplet {
 		background(255);
 		mouse=new PVector(mouseX, mouseY);
 		drawGraph(g);
+
 		//drawGraph(g2);
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
@@ -126,7 +128,7 @@ public class MyApplet extends PApplet {
 	    if (editModeClickCount>0)
 	    {
 
-	      println("called");
+	      //println("called");
 	      int tempLeastFound=findClickedVertex(20);
 	      if (tempLeastFound==-1)
 	      {
@@ -168,7 +170,6 @@ public class MyApplet extends PApplet {
 	    {
 	      g.points.get(leastFound).x=mouse.x;
 	      g.points.get(leastFound).y=mouse.y;
-	      println("called");
 	    }
 	  }
 	}
@@ -190,7 +191,19 @@ public class MyApplet extends PApplet {
 		for (Point p : g1.points) {	
 			drawPoint(p,i);
 			i++;
-		}		
+		}	
+		//Draw all corners
+		if (editMode) {
+			for (Corner c : g1.getCorners()) {
+				drawCorner(c);
+			}
+			/*println(g1.getCorners().size());
+			Corner c=g1.getCorners().get(1);
+			drawCorner(c);
+			fill(0,0,255);
+			drawCorner(g1.nextCorner(g1.corners.get(1)));*/
+		}
+			
 	}
 	public void drawPoint(Point p,int index)
 	  {
@@ -208,6 +221,12 @@ public class MyApplet extends PApplet {
 	    stroke(0);
 	    line((float) e.p1.x, (float) e.p1.y, (float) e.p2.x, (float) e.p2.y);
 	  }
+	
+	public void drawCorner(Corner c)
+	{
+		Vector cornerPosition=c.getPosition(20);
+		ellipse((float)cornerPosition.x,(float)cornerPosition.y,5,5);
+	}
 	
 	//This function looks at the current mouse position and returns the index of the vertex on it(distance to register is set to "reg")
 	int findClickedVertex(int reg)
