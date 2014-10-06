@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites>
-  <testsuite errors="0" failures="0" hostname="Arindam-Laptop" id="0" name="GraphTest" package="com.jking31cs" skipped="0" tests="5" time="0.057" timestamp="2014-10-06T19:17:50">
+  <testsuite errors="0" failures="0" hostname="Arindam-Laptop" id="0" name="GraphTest" package="com.jking31cs" skipped="0" tests="5" time="0.047" timestamp="2014-10-06T22:09:55">
       <properties>
           <property name="java.vendor" value="Oracle Corporation" />
 
@@ -152,7 +152,7 @@
 
           <property name="java.class.path" value="E:\Development\EclipseGit\GraphDatastructure\bin;E:\Development\EclipseGit\GraphDatastructure\core.jar;E:\Development\EclipseGit\GraphDatastructure\hamcrest-core-1.3.jar;E:\Development\EclipseGit\GraphDatastructure\junit-4.11.jar;E:\Development\eclipse\plugins\org.apache.ant_1.9.2.v201404171502\lib\ant-launcher.jar;E:\Development\eclipse\plugins\org.apache.ant_1.9.2.v201404171502\lib\ant.jar;E:\Development\eclipse\plugins\org.apache.ant_1.9.2.v201404171502\lib\ant-junit.jar;E:\Development\eclipse\plugins\org.apache.ant_1.9.2.v201404171502\lib\ant-junit4.jar" />
 
-          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.jking31cs.GraphTest filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,E:\Development\EclipseGit\GraphDatastructure\junit\TEST-com.jking31cs.GraphTest.xml crashfile=E:\Development\EclipseGit\GraphDatastructure\junitvmwatcher4944997795610723563.properties propsfile=E:\Development\EclipseGit\GraphDatastructure\junit1555612883812306410.properties" />
+          <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner com.jking31cs.GraphTest filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,E:\Development\EclipseGit\GraphDatastructure\junit\TEST-com.jking31cs.GraphTest.xml crashfile=E:\Development\EclipseGit\GraphDatastructure\junitvmwatcher2568157302874970886.properties propsfile=E:\Development\EclipseGit\GraphDatastructure\junit3114320056454194828.properties" />
 
           <property name="ant.version" value="Apache Ant(TM) version 1.9.2 compiled on July 8 2013" />
 
@@ -234,11 +234,11 @@
 
       <testcase classname="com.jking31cs.GraphTest" name="testAddEdges" time="0.0" />
 
-      <testcase classname="com.jking31cs.GraphTest" name="testOuterFaceDetection" time="0.004" />
+      <testcase classname="com.jking31cs.GraphTest" name="testOuterFaceDetection" time="0.001" />
 
       <testcase classname="com.jking31cs.GraphTest" name="testAddVertices" time="0.0" />
 
-      <testcase classname="com.jking31cs.GraphTest" name="testLoopNotOn0Index" time="0.002" />
+      <testcase classname="com.jking31cs.GraphTest" name="testLoopNotOn0Index" time="0.001" />
 
       <system-out><![CDATA[]]></system-out>
 

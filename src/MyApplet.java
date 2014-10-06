@@ -18,9 +18,12 @@ public class MyApplet extends PApplet {
 	boolean drawMode;
 	boolean editMode;
 	boolean showSideWalks;
+	boolean showCorners;
 	int editModeClickCount=0;
 	int editModeLeastFound=-1;
 	int leastFound;
+	
+	int cornerToShow=0;
 	
 	//Randomized color lookup table
 	ArrayList<Integer> colorR=new ArrayList<>();
@@ -34,6 +37,9 @@ public class MyApplet extends PApplet {
 		drawMode=true;
 		editMode=false;
 		showSideWalks=false;
+		showCorners=false;
+		
+	
 		g = new Graph();
 		for(int i=0;i<50;i++)
 		{
@@ -152,6 +158,21 @@ public class MyApplet extends PApplet {
 	      editModeClickCount=0;
 	      editModeLeastFound=-1;
 	    }
+	    if(showCorners){
+	    	List<Corner> allCorners= g.getCorners();
+	    	Corner minCorner=allCorners.get(0);
+	    	int minFound=0;
+	    	for(int i=0;i<allCorners.size();i++){
+	    		float distance=(float)allCorners.get(i).getPosition(20).sub(new Vector(mouseX,mouseY)).getMag();
+	    		float minDistance=(float)minCorner.getPosition(20).sub(new Vector(mouseX,mouseY)).getMag();
+	    		if(distance<minDistance){
+	    			minFound=i;
+	    			minCorner=allCorners.get(i);
+	    		}
+	    	}
+	    	cornerToShow=minFound;
+	    }
+	    
 	  }
 	}
 	
@@ -172,6 +193,10 @@ public class MyApplet extends PApplet {
 	  if (key == 's')
 	  {
 	    showSideWalks=!showSideWalks;
+	  }
+	  if (key == 'c')
+	  {
+	    showCorners=!showCorners;
 	  }
 	}
 	
@@ -208,31 +233,45 @@ public class MyApplet extends PApplet {
 			i++;
 		}	
 		
-		if (editMode && showSideWalks) {
-			//Draw all corners
-			for (Corner c : g1.getCorners()) {
-				drawCorner(c);
-			}
-			
-			//Draw all sidewalks
-			int z=0;
-			for (ArrayList<Corner> loop : g1.getSideWalkPaths()){
-			
-				int j=0;			
-				stroke(colorR.get(z),colorG.get(z),colorB.get(z));
-				z++;		
-				for(j=0;j<loop.size()-1;j++){
-					line((float)loop.get(j).getPosition(20).x,(float)loop.get(j).getPosition(20).y,(float)loop.get(j+1).getPosition(20).x,(float)loop.get(j+1).getPosition(20).y);
+		if (editMode) {
+			if (showSideWalks) {
+				// Draw all corners
+				for (Corner c : g1.getCorners()) {
+					drawCorner(c);
 				}
-				line((float)loop.get(j).getPosition(20).x,(float)loop.get(j).getPosition(20).y,(float)loop.get(0).getPosition(20).x,(float)loop.get(0).getPosition(20).y);
-				stroke(0);
-				
+
+				// Draw all sidewalks
+				int z = 0;
+				for (ArrayList<Corner> loop : g1.getSideWalkPaths()) {
+
+					int j = 0;
+					stroke(colorR.get(z), colorG.get(z), colorB.get(z));
+					z++;
+					for (j = 0; j < loop.size() - 1; j++) {
+						line((float) loop.get(j).getPosition(20).x,
+								(float) loop.get(j).getPosition(20).y,
+								(float) loop.get(j + 1).getPosition(20).x,
+								(float) loop.get(j + 1).getPosition(20).y);
+					}
+					line((float) loop.get(j).getPosition(20).x, (float) loop
+							.get(j).getPosition(20).y, (float) loop.get(0)
+							.getPosition(20).x, (float) loop.get(0)
+							.getPosition(20).y);
+					stroke(0);
+
+				}
 			}
-			/*println(g1.getCorners().size());
-			Corner c=g1.getCornerFromIndex(g1.corners.get(1));
-			drawCorner(c);
-			fill(0,0,255);
-			drawCorner(g1.nextCorner(g1.corners.get(1)));*/
+			if (showCorners) {
+				//println(g1.getCorners().size());
+				Corner c = g1.getCornerFromIndex(g1.corners.get(cornerToShow));
+				drawCorner(c);
+				fill(0, 0, 255);
+				drawCorner(g1.nextCorner(g1.corners.get(cornerToShow)));
+				fill(0, 255, 0);
+				drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
+				fill(255,0,0);
+				drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
+			}
 		}
 			
 	}
@@ -300,6 +339,8 @@ public class MyApplet extends PApplet {
 	  }
 	  return leastFound;
 	}
+	
+	
 
 	public static void main(String[] args) {
 		PApplet.main("MyApplet");

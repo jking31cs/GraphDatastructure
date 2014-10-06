@@ -265,9 +265,31 @@ public class Graph {
 	 * @return
 	 */
 	public Corner nextCorner(CornerIndexInfo c){
-		Edge e1 = new Edge(points.get(v.get(c.v)), points.get(v.get(n.get(c.v))));
-		Edge e2 = new Edge(points.get(v.get(n.get(c.v))), points.get(v.get(n.get(corners.get(c.n).v))));
-		return new Corner(e1,e2);
+		return getCornerFromIndex(corners.get(c.n));
+	}
+	
+	/**
+	 * Given a corner gets the swing corner
+	 * @param c
+	 * @return
+	 */
+	public Corner swingCorner(CornerIndexInfo c){
+		return getCornerFromIndex(corners.get(c.s));
+	}
+	
+	/**
+	 * Given a corner gets the unSwing corner
+	 * @param c
+	 * @return
+	 */
+	public Corner unSwingCorner(CornerIndexInfo c){
+		CornerIndexInfo swing=corners.get(c.s);
+
+		while(!corners.get(swing.s).equals(c)){
+			swing=corners.get(swing.s);
+	
+		}
+		return getCornerFromIndex(swing);
 	}
 	
 	/**
