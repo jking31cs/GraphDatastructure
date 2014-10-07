@@ -89,6 +89,13 @@ public class Corner {
 	 */
 	public Vector getPosition(float offset)
 	{
+		//Special case for dangling edge:
+		Vector v1 = e1.asVec().normalize();
+		Vector v2 = e2.asVec().normalize();
+		if (Math.abs(v1.vectorProduct(v2)) < .005) {
+			return new Vector(e1.p2.x, e1.p2.y).add(e1.asVec().normalize().mul(offset));
+		}
+
 		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y);
 		double theta=e1.asVec().angleBetween(e2.asVec().mul(-1))/2;
 		Vector bisectorVector=bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(-1);

@@ -284,10 +284,12 @@ public class MyApplet extends PApplet {
 				drawCorner(c);
 				fill(0, 0, 255);
 				drawCorner(g1.nextCorner(g1.corners.get(cornerToShow)));
-				fill(0, 255, 0);
-				drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
-				fill(255,0,0);
-				drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
+				if (g1.swingCorner(g1.corners.get(cornerToShow)) != null) {
+					fill(0, 255, 0);
+					drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
+					fill(255,0,0);
+					drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
+				}
 			}
 		}
 			

@@ -274,6 +274,7 @@ public class Graph {
 	 * @return
 	 */
 	public Corner swingCorner(CornerIndexInfo c){
+		if (c.s == null) return null;
 		return getCornerFromIndex(corners.get(c.s));
 	}
 	
@@ -284,6 +285,7 @@ public class Graph {
 	 */
 	public Corner unSwingCorner(CornerIndexInfo c){
 		CornerIndexInfo swing=corners.get(c.s);
+		if (swing == null) return null;
 
 		while(!corners.get(swing.s).equals(c)){
 			swing=corners.get(swing.s);

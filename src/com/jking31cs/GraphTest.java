@@ -200,4 +200,19 @@ public class GraphTest {
 		}
 	}
 
+	@Test
+	public void testDanglingCornerOffset() {
+		Point[] p = new Point[] {
+				new Point(50,50),
+				new Point(100,100)
+		};
+
+		Edge e1 = new Edge(p[0], p[1]);
+		Edge e2 = new Edge(p[1], p[0]);
+
+		Corner c = new Corner(e1, e2);
+
+		assertEquals(new Vector(100, 100).add(new Vector(1,1).normalize().mul(20)), c.getPosition(20));
+	}
+
 }
