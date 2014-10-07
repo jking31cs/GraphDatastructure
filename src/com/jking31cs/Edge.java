@@ -8,6 +8,10 @@ public class Edge {
 		this.p1 = p1;
 		this.p2 = p2;
 	}
+
+	public double length() {
+		return asVec().getMag();
+	}
 	
 	public Vector asVec() {
 		return new Vector(p2.x-p1.x, p2.y-p1.y);

@@ -294,7 +294,7 @@ public class Graph {
 	
 	/**
 	 * Given CornerIndexInfo returns a Corner object for drawing
-	 * @param start
+	 * @param c
 	 * @return 
 	 */
 	public Corner getCornerFromIndex(CornerIndexInfo c){
@@ -377,7 +377,47 @@ public class Graph {
 			if (sum < 0) return face;
 		}
 		throw new IllegalStateException("Somehow this has no outer face.");
+	}
 
-
+	public List<Double> faceAreas() {
+		List<Double> toRet = new ArrayList<>();
+		for (int face = 0; face < h.size(); face++) {
+			if (face == getOuterFaceIndex()) {
+				toRet.add(null);
+				continue;
+			}
+			List<Edge> edges = new ArrayList<>();
+			Integer startIndex = h.get(face);
+			Integer curIndex = startIndex;
+			Integer nextIndex = n.get(curIndex);
+			do {
+				Point p1 = points.get(v.get(curIndex));
+				Point p2 = points.get(v.get(nextIndex));
+				edges.add(new Edge(p1, p2));
+				curIndex = nextIndex;
+				nextIndex = n.get(nextIndex);
+			} while (!startIndex.equals(curIndex));
+			/*
+			 * Triangularization for area.
+			 *
+			 * The idea is that we break up the shape into many triangles. And add the areas of each of them.
+			 */
+			double area = 0;
+			while (!edges.isEmpty()) {
+				Edge e1 = edges.remove(0);
+				Edge e2 = edges.remove(0);
+				Edge e3;
+				if (edges.size() == 1) {
+					e3 = edges.remove(0);
+				} else {
+					e3 = new Edge(e1.p1, e2.p2);
+					edges.add(e3);
+				}
+				double s = (e1.length() + e2.length() + e3.length()) / 2;
+				area += Math.sqrt(s * (s - e1.length()) * (s - e2.length()) * (s - e3.length()));
+			}
+			toRet.add(area);
+		}
+		return toRet;
 	}
 }

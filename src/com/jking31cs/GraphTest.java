@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class GraphTest {
 
 	@Test
@@ -154,6 +156,48 @@ public class GraphTest {
 		assertEquals(3, g.getFacePaths().size());
 
 		assertEquals((Integer) 0, g.getOuterFaceIndex());
+	}
+
+	@Test
+	public void testAreas() {
+		Point[] p = new Point[] {
+			new Point(50,50),
+			new Point(50,150),
+			new Point(150,150)
+		};
+
+		Graph g = new Graph();
+		g.addVertex(p[0]);
+		g.addVertex(p[1]);
+		g.addVertex(p[2]);
+
+		g.addEdge(new Edge(p[0],p[1]));
+		g.addEdge(new Edge(p[1],p[2]));
+		g.addEdge(new Edge(p[2],p[0]));
+
+		assertEquals(2, g.getFacePaths().size());
+		assertEquals(2, g.faceAreas().size());
+
+		assertTrue(g.faceAreas().get(1) == null);
+		assertEquals(5000, g.faceAreas().get(0), 5);
+
+		p = Arrays.copyOf(p, 4);
+		p[3] = new Point(150,50);
+		g.addVertex(p[3]);
+		g.addEdge(new Edge(p[2],p[3]));
+		g.addEdge(new Edge(p[3], p[0]));
+
+		assertEquals(3, g.getFacePaths().size());
+		assertEquals(3, g.faceAreas().size());
+
+		for (int i = 0; i < 3; i++) {
+			if (g.getOuterFaceIndex() == i) {
+				assertTrue(g.faceAreas().get(i) == null);
+			} else {
+				assertEquals(5000, g.faceAreas().get(i), 5);
+			}
+
+		}
 	}
 
 }
