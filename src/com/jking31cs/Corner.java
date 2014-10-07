@@ -87,10 +87,17 @@ public class Corner {
 	/**
 	 * Uses the new bisector function and returns the position(at a distance of offset) of the corner as a vector.
 	 */
-	public Vector getPosition(int offset)
+	public Vector getPosition(float offset)
 	{
 		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y);
-		Vector bisectorVector=bisector().normalize().mul(offset).rotate(Math.PI/2);
+		double theta=e1.asVec().angleBetween(e2.asVec().mul(-1))/2;
+		Vector bisectorVector=bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(-1);
+		if (theta < Math.PI && theta > 0) {
+			bisectorVector = bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(1);
+		}
+		if (theta > Math.PI && theta < 2*Math.PI) {
+			bisectorVector = bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(-2);
+		}
 		return commonPoint.add(bisectorVector);
 	}
 
