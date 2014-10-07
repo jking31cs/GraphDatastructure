@@ -253,8 +253,9 @@ public class MyApplet extends PApplet {
 
 				// Draw all sidewalks
 				int z = 0;
-				for (ArrayList<Corner> loop : g1.getSideWalkPaths()) {
-
+				List<Double> areas = g1.faceAreas();
+				for (Map.Entry<Integer, ArrayList<Corner>> entry : g1.getSideWalkPaths().entrySet()) {
+					List<Corner> loop = entry.getValue();
 					int j = 0;
 					stroke(colorR.get(z), colorG.get(z), colorB.get(z));
 					z++;
@@ -269,6 +270,11 @@ public class MyApplet extends PApplet {
 							.getPosition(20).x, (float) loop.get(0)
 							.getPosition(20).y);
 					stroke(0);
+					if (areas.get(entry.getKey()) != null) {
+						text(areas.get(entry.getKey()).toString(), (float) loop.get(0)
+								.getPosition(50).x, (float) loop.get(0)
+								.getPosition(50).y);
+					}
 
 				}
 			}

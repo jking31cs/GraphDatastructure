@@ -305,23 +305,31 @@ public class Graph {
 	
 	
 	/**
-	 * Returns Lists of corners in a loop stored in a HashSet, useful for drawing sidewalk's
+	 * Returns Lists of corners in a loop stored in a HashMap, useful for drawing sidewalks,
+	 * also storing the face index.
 	 * @return 
 	 */
-	public Set<ArrayList<Corner>> getSideWalkPaths(){
-		Set<ArrayList<Corner>> toRet = new HashSet<>();
+	public Map<Integer, ArrayList<Corner>> getSideWalkPaths(){
+		Map<Integer, ArrayList<Corner>> toRet = new HashMap<>();
 		for(CornerIndexInfo startIndex : corners){
 			if(!startIndex.isVisited){
 				ArrayList<Corner> sideWalkLoop=new ArrayList<>();
+				Integer faceIndex = null;
 				sideWalkLoop.add(getCornerFromIndex(startIndex));
 				startIndex.visit();
 				CornerIndexInfo next=corners.get(startIndex.n);
 				while(!startIndex.equals(next)){
+					for (int i = 0; i < h.size(); i++) {
+						if (h.get(i).equals(startIndex.v)) {
+							faceIndex = i;
+						}
+					}
 					sideWalkLoop.add(getCornerFromIndex(next));
 					next.visit();
 					next=corners.get(next.n);
 				}
-				toRet.add(sideWalkLoop);
+				if (faceIndex == null) throw new RuntimeException("No face associated with sidewalk.");
+				toRet.put(faceIndex, sideWalkLoop);
 			}
 		}
 		for(CornerIndexInfo resetVisited : corners){
