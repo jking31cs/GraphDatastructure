@@ -92,7 +92,7 @@ public class Corner {
 		//Special case for dangling edge:
 		Vector v1 = e1.asVec().normalize();
 		Vector v2 = e2.asVec().normalize();
-		if (Math.abs(v1.vectorProduct(v2)) < .005) {
+		if (Math.abs(v1.determinant2(v2)) < .005) {
 			return new Vector(e1.p2.x, e1.p2.y).add(e1.asVec().normalize().mul(offset));
 		}
 

@@ -7,6 +7,7 @@ import com.jking31cs.Point;
 import com.jking31cs.Vector;
 
 import processing.core.*;
+import processing.event.MouseEvent;
 
 
 public class MyApplet extends PApplet {
@@ -36,11 +37,14 @@ public class MyApplet extends PApplet {
 	String title="CS 6491, Fall 2014, Title: Graph Datastructure";
 	String instructions="Keys: E: Edit Mode(Click near Vertex to create new one) S:Toggle sidewalks in Edit Mode C:Toggle Corners in Edit Mode";
 	String legend="Legend in Corner Mode:   Black:Current Corner Blue:Next Corner Green: Swing Corner Red:Unswing Corner";
-	String names="Bobby King & Arindam Bose";
+	String names="Bobby King";
+	
+	float dz = -490, rx = -.1832594f, ry = -.6479535f;
 	@Override
 	public void setup() {
 		
-		size(800,600);
+		size(800,600, P3D);
+		
 
 		drawMode=true;
 		editMode=false;
@@ -80,10 +84,24 @@ public class MyApplet extends PApplet {
 	public void draw()
 	{
 		background(255);
-		mouse=new PVector(mouseX, mouseY);
-		drawGraph(g);
+		if (drawMode) {
+			mouse=new PVector(mouseX, mouseY);
+			drawGraph(g);
+		} else {
+			pushMatrix();
+			camera();
+			translate(width/2,height/2,dz); // puts origin of model at screen center and moves forward/away by dz
+			lights();  // turns on view-dependent lighting
+			rotateX(rx); rotateY(ry); // rotates the model around the new origin (center of screen)
+			rotateX(PI/2); // rotates frame around X to make X and Y basis vectors parallel to the floor
+			mouse=new PVector(mouseX, mouseY);
+			drawGraph(g);
+			popMatrix();
+		}
+		
 		
 		drawStuff();
+		  
 		//drawGraph(g2);
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
@@ -96,17 +114,18 @@ public class MyApplet extends PApplet {
 		      drawEdge(tempEdge);
 		    }
 		  }
-		  if (editMode)
-		  {
-		    if (g.points.size()>0 && editModeLeastFound!=-1)
-		    {
-		      Point tempPoint=new Point(mouse.x, mouse.y);
-		      drawPoint(tempPoint,-1);
-		      Edge tempEdge=new Edge(g.points.get(editModeLeastFound), tempPoint);
-		      drawEdge(tempEdge);
-		      editModeClickCount++;
-		      //canAdd=true;
-		    }
+		  if (editMode) {
+			  
+			  
+			  if (g.points.size()>0 && editModeLeastFound!=-1) {
+			      Point tempPoint=new Point(mouse.x, mouse.y);
+			      drawPoint(tempPoint,-1);
+			      Edge tempEdge=new Edge(g.points.get(editModeLeastFound), tempPoint);
+			      drawEdge(tempEdge);
+			      editModeClickCount++;
+			      //canAdd=true;
+			  }
+			  
 		  }
 	}
 	
@@ -264,17 +283,21 @@ public class MyApplet extends PApplet {
 								(float) loop.get(j).getPosition(20).y,
 								(float) loop.get(j + 1).getPosition(20).x,
 								(float) loop.get(j + 1).getPosition(20).y);
+						pushMatrix();
+						translate((float) loop.get(j).getPosition(20).x,(float) loop.get(j).getPosition(20).y,50);
+						sphere(10);
+						popMatrix();
+						
 					}
 					line((float) loop.get(j).getPosition(20).x, (float) loop
 							.get(j).getPosition(20).y, (float) loop.get(0)
 							.getPosition(20).x, (float) loop.get(0)
 							.getPosition(20).y);
-					stroke(0);
-					if (areas.get(entry.getKey()) != null) {
-						text(areas.get(entry.getKey()).toString(), (float) loop.get(0)
-								.getPosition(50).x, (float) loop.get(0)
-								.getPosition(50).y);
-					}
+					pushMatrix();
+					translate((float) loop.get(j).getPosition(20).x,(float) loop.get(j).getPosition(20).y,50);
+					sphere(10);
+					popMatrix();
+					
 
 				}
 			}
@@ -362,13 +385,27 @@ public class MyApplet extends PApplet {
 	
 	void drawStuff()
 	{
-	  image(bose,700,20,100,100);
-	  image(bobby,595,20,100,100);
+	  image(bobby,675,20,100,100);
 	  fill(0);
 	  text(title,5,10);
 	  text(instructions,5,550);
 	  text(legend,5,570);
-	  text(names,600,10);
+	  text(names,675,10);
+	}
+	
+	@Override
+	public void mouseMoved() {
+		if (keyPressed && key==' ') {
+			rx-=PI*(mouseY-pmouseY)/height;
+			ry+=PI*(mouseX-pmouseX)/width;
+			System.out.println(String.format("rx: %s, ry: %s, dz: %s", rx,ry,dz));
+		}
+	}	
+	
+	@Override
+	public void mouseWheel(MouseEvent event) {
+		dz -= event.getAmount(); 
+		System.out.println(String.format("rx: %s, ry: %s, dz: %s", rx,ry,dz));
 	}
 	
 

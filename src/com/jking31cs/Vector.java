@@ -80,9 +80,9 @@ public class Vector {
 	public Vector rotate(double angle, Vector i, Vector j) {
 		double x = this.dotProduct(i);
 		double y = this.dotProduct(j);
-		Vector a = i.add(x*cos(angle) - y*sin(angle));
-		Vector b = j.add(x*sin(angle) + y*cos(angle));
-		return this.add(a).add(b);
+		Vector a = i.mul(x*cos(angle) - y*sin(angle));
+		Vector b = j.mul(x*sin(angle) + y*cos(angle));
+		return a.add(b);
 	}
 	
 	/**
@@ -153,5 +153,9 @@ public class Vector {
 		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
 			return false;
 		return true;
+	}
+
+	public Vector rotate(double angle) {
+		return this.rotate(angle, new Vector(1,0), new Vector(0,1));
 	}
 }
