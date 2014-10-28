@@ -43,7 +43,7 @@ public class Corner {
 		if (e1.p1.equals(e2.p2)) {
 			Point commonPoint = new Point(e1.p1.x, e1.p1.y);
 			Vector v1 = e1.asVec();
-			Vector v2 = e2.asVec().mul(-1f);
+			Vector v2 = new Vector(e2.p1.x - e2.p2.x, e2.p1.y - e2.p2.y);
 			Vector bi = v1.add(v2);
 			return new Edge(commonPoint, new Point(commonPoint.x + bi.x, commonPoint.y + bi.y));
 		}

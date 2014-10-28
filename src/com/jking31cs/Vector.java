@@ -10,26 +10,26 @@ import static java.lang.Math.*;
 public class Vector {
 	public final double x;
 	public final double y;
+	public final double z;
   
 	public Vector(double a,double b){
 		x=a;
 		y=b;
+		z=0;
 	}	
+	
+	public Vector(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
   
 	/**
 	 * Gets the magnitude of the Vector.
 	 * @return
 	 */
 	public double getMag(){
-	    return sqrt( x*x + y*y );
-	}
-  
-	/**
-	 * Gets the angle of the vector.
-	 * @return
-	 */
-	public double getAngle(){
-		return atan2(y,x);
+	    return sqrt( x*x + y*y + z*z);
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class Vector {
 	 * @return
 	 */
 	public Vector mul(double c){
-		return new Vector(x*c,y*c);
+		return new Vector(x*c,y*c,z*c);
  	}
 	
 	/**
@@ -55,7 +55,11 @@ public class Vector {
 	 * @return
 	 */
 	public Vector add(Vector v) {
-		return new Vector(v.x+x, v.y+y);
+		return new Vector(v.x+x, v.y+y, v.z+z);
+	}
+	
+	public Vector add(double s) {
+		return new Vector(x+s, y+s, z+s);
 	}
 	
 	/**
@@ -64,19 +68,21 @@ public class Vector {
 	 * @return
 	 */
 	public Vector sub(Vector v) {
-		return new Vector(x-v.x, y-v.y);
+		return new Vector(x-v.x, y-v.y, z-v.z);
 	}
 	
 	/**
-	 * Rotates the vector by the given angle which is in radians.
+	 * Rotates the vector by the given angle which is in radians in the plane (i,j).
+	 * Assumes that i,j are orthogonal
 	 * @param angle
 	 * @return
 	 */
-	public Vector rotate(double angle) {
-		return new Vector(
-			cos(angle)*x - sin(angle)*y,
-			sin(angle)*x + cos(angle)*y
-		);
+	public Vector rotate(double angle, Vector i, Vector j) {
+		double x = this.dotProduct(i);
+		double y = this.dotProduct(j);
+		Vector a = i.add(x*cos(angle) - y*sin(angle));
+		Vector b = j.add(x*sin(angle) + y*cos(angle));
+		return this.add(a).add(b);
 	}
 	
 	/**
@@ -85,7 +91,7 @@ public class Vector {
 	 * @return
 	 */
 	public double dotProduct(Vector v) {
-		return v.x*x + v.y*y;
+		return v.x*x + v.y*y + v.z*z;
 	}
 	
 	/**
@@ -95,8 +101,12 @@ public class Vector {
 	 * @param v
 	 * @return
 	 */
-	public double vectorProduct(Vector v) {
+	public double determinant2(Vector v) {
 		return x*v.y - y*v.x;
+	}
+	
+	public double determinant3(Vector v) {
+		return sqrt(this.dotProduct(this) * v.dotProduct(v) - this.dotProduct(v));
 	}
 	
 	public double angleBetween(Vector v) {
@@ -111,43 +121,37 @@ public class Vector {
 
 
 		double angle = Math.acos(dotProduct);
-	       
-       // Check the current rotation of vectors
-       if(this.vectorProduct(v) < 0) {
-    	   angle *= -1;   
-       }                 
-       return angle;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Vector vector = (Vector) o;
-
-		if (Double.compare(vector.x, x) != 0) return false;
-		if (Double.compare(vector.y, y) != 0) return false;
-
-		return true;
+		return angle;
 	}
 
 	@Override
 	public int hashCode() {
-		int result;
+		final int prime = 31;
+		int result = 1;
 		long temp;
 		temp = Double.doubleToLongBits(x);
-		result = (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(y);
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
-	@Override
-	public String toString() {
-		return "Vector{" +
-				"x=" + x +
-				", y=" + y +
-				'}';
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vector other = (Vector) obj;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+			return false;
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+			return false;
+		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+			return false;
+		return true;
 	}
 }

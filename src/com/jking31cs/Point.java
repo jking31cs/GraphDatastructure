@@ -7,38 +7,56 @@ package com.jking31cs;
 public class Point {
 	public double x;
 	public double y;
+	public double z;
 	
 	public Point(double x, double y) {
 		this.x = x;
 		this.y = y;
+		this.z = 0;
+	}
+	
+	public Point(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 	@Override
 	public String toString() {
-		return "Point: (" + x + "," + y + ")";
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Point point = (Point) o;
-
-		if (Double.compare(point.x, x) != 0) return false;
-		if (Double.compare(point.y, y) != 0) return false;
-
-		return true;
+		return "Point: (" + x + "," + y + "," + z + ")";
 	}
 
 	@Override
 	public int hashCode() {
-		int result;
+		final int prime = 31;
+		int result = 1;
 		long temp;
 		temp = Double.doubleToLongBits(x);
-		result = (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(y);
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Point other = (Point) obj;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+			return false;
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+			return false;
+		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+			return false;
+		return true;
+	}
+
+	
 }
