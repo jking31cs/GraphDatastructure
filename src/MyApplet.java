@@ -1,19 +1,15 @@
 import java.util.*;
 
-import com.jking31cs.Corner;
-import com.jking31cs.Edge;
-import com.jking31cs.Graph;
-import com.jking31cs.Point;
-import com.jking31cs.Vector;
+import com.jking31cs.*;
 
+import com.jking31cs.Vector;
 import processing.core.*;
 import processing.event.MouseEvent;
 
 
 public class MyApplet extends PApplet {
 	
-	Graph g;
-	Graph g2;
+	Model3D model;
 	PVector mouse;
 	PVector mouseClicked;
 	boolean drawMode;
@@ -53,31 +49,14 @@ public class MyApplet extends PApplet {
 		
 		bose=loadImage("pics/portrait_bose.jpg");
 		bobby=loadImage("pics/portrait_bobby.png");
-	
-		g = new Graph();
+
+		model = new Model3D();
 		for(int i=0;i<50;i++)
 		{
 			colorR.add((int)random(0,255));
 			colorG.add((int)random(0,30));
 			colorB.add((int)random(0,255));
 		}
-		/*
-		g2=new Graph();
-		Point p1 = new Point(100,100);
-		g2.addVertex(p1);
-		Point p2 = new Point(300,300);
-		g2.addVertex(p2);
-		Point p3 = new Point(100,200);
-		g2.addVertex(p3);
-		Point p4 = new Point(30,75);
-		g2.addVertex(p4);
-		
-		g2.addEdge(new Edge(p1,p2));
-		g2.addEdge(new Edge(p2,p3));
-		g2.addEdge(new Edge(p3,p1));
-		g2.addEdge(new Edge(p1,p4));
-		g2.addEdge(new Edge(p2,p4));
-		*/
 		
 	}
 	
@@ -86,7 +65,7 @@ public class MyApplet extends PApplet {
 		background(255);
 		if (drawMode) {
 			mouse=new PVector(mouseX, mouseY);
-			drawGraph(g);
+			drawGraph(model.mainGraph);
 		} else {
 			pushMatrix();
 			camera();
@@ -95,7 +74,9 @@ public class MyApplet extends PApplet {
 			rotateX(rx); rotateY(ry); // rotates the model around the new origin (center of screen)
 			rotateX(PI/2); // rotates frame around X to make X and Y basis vectors parallel to the floor
 			mouse=new PVector(mouseX, mouseY);
-			drawGraph(g);
+			drawGraph(model.mainGraph);
+			drawGraph(model.z_offset_graph);
+			for (Edge e : model.verticalEdges()) drawEdge(e);
 			popMatrix();
 		}
 		
@@ -106,21 +87,21 @@ public class MyApplet extends PApplet {
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
 		  {
-		    if (g.points.size()>0)
+		    if (model.mainGraph.points.size()>0)
 		    {
 		      Point tempPoint=new Point(mouse.x, mouse.y);
 		      drawPoint(tempPoint,-1);
-		      Edge tempEdge=new Edge(g.points.get(g.points.size()-1), tempPoint);
+		      Edge tempEdge=new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-1), tempPoint);
 		      drawEdge(tempEdge);
 		    }
 		  }
 		  if (editMode) {
 			  
 			  
-			  if (g.points.size()>0 && editModeLeastFound!=-1) {
+			  if (model.mainGraph.points.size()>0 && editModeLeastFound!=-1) {
 			      Point tempPoint=new Point(mouse.x, mouse.y);
 			      drawPoint(tempPoint,-1);
-			      Edge tempEdge=new Edge(g.points.get(editModeLeastFound), tempPoint);
+			      Edge tempEdge=new Edge(model.mainGraph.points.get(editModeLeastFound), tempPoint);
 			      drawEdge(tempEdge);
 			      editModeClickCount++;
 			      //canAdd=true;
@@ -141,13 +122,13 @@ public class MyApplet extends PApplet {
 	  if (drawMode)
 	  {
 	    Point addedPoint;
-	    if (g.points.size()>=3)
+	    if (model.mainGraph.points.size()>=3)
 	    {
 	      leastFound=findClickedVertex(20);
 	      if (leastFound!=-1)
 	      {
 	        addedPoint=new Point(-1,-1);
-	        g.addEdge(new Edge(g.points.get(g.points.size()-1), g.points.get(leastFound)));
+	        model.addEdge(new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-1), model.mainGraph.points.get(leastFound)));
 	      } else
 	      {
 	        addedPoint=new Point(mouse.x, mouse.y);
@@ -157,12 +138,12 @@ public class MyApplet extends PApplet {
 	    	addedPoint=new Point(mouse.x, mouse.y);
 	    }
 	    if(addedPoint.x!=-1 && addedPoint.y!=-1)
-	    	g.addVertex(addedPoint);
-	    if (g.points.size()>1 && addedPoint.x!=-1 && addedPoint.y!=-1)
+	    	model.addPoint(addedPoint);
+	    if (model.mainGraph.points.size()>1 && addedPoint.x!=-1 && addedPoint.y!=-1)
 	    {
-	      Edge addedEdge=new Edge(g.points.get(g.points.size()-2), g.points.get(g.points.size()-1));
+	      Edge addedEdge=new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-2), model.mainGraph.points.get(model.mainGraph.points.size()-1));
 	      //graph.vertices.get(graph.vertices.size()-2).addEdge(addedEdge);
-	      g.addEdge(addedEdge);
+	      model.addEdge(addedEdge);
 	    }
 	  }
 
@@ -177,19 +158,19 @@ public class MyApplet extends PApplet {
 					// println("called");
 					int tempLeastFound = findClickedVertex(20);
 					if (tempLeastFound == -1) {
-						g.addVertex(new Point(mouse.x, mouse.y));
-						g.addEdge(new Edge(g.points.get(editModeLeastFound),
-								g.points.get(g.points.size() - 1)));
+						model.addPoint(new Point(mouse.x, mouse.y));
+						model.addEdge(new Edge(model.mainGraph.points.get(editModeLeastFound),
+								model.mainGraph.points.get(model.mainGraph.points.size() - 1)));
 					} else {
-						g.addEdge(new Edge(g.points.get(editModeLeastFound),
-								g.points.get(tempLeastFound)));
+						model.addEdge(new Edge(model.mainGraph.points.get(editModeLeastFound),
+								model.mainGraph.points.get(tempLeastFound)));
 					}
 					editModeClickCount = 0;
 					editModeLeastFound = -1;
 				}
 			}
 	    if(showCorners){
-	    	List<Corner> allCorners= g.getCorners();
+	    	List<Corner> allCorners= model.mainGraph.getCorners();
 	    	Corner minCorner=allCorners.get(0);
 	    	int minFound=0;
 	    	for(int i=0;i<allCorners.size();i++){
@@ -238,8 +219,8 @@ public class MyApplet extends PApplet {
 	    int leastFound=findClickedVertex(20);
 	    if (leastFound!=-1)
 	    {
-	      g.points.get(leastFound).x=mouse.x;
-	      g.points.get(leastFound).y=mouse.y;
+	      model.mainGraph.points.get(leastFound).x=mouse.x;
+	      model.mainGraph.points.get(leastFound).y=mouse.y;
 	    }
 	  }
 	}
@@ -317,21 +298,29 @@ public class MyApplet extends PApplet {
 		}
 			
 	}
-	public void drawPoint(Point p,int index)
-	  {
-	    fill(0,255,0);
-		float x = (float) p.x,
-		       y = (float) p.y;
-	    ellipse(x, y,20,20);
-	    fill(0);
+	public void drawPoint(Point p,int index) {
+	    if (drawMode) {
+			fill(0,255,0);
+			float x = (float) p.x,
+					y = (float) p.y;
+			ellipse(x, y,20,20);
+			fill(0);
 
-	    text(""+index, x -5, y +5);
-	    
-	  }
+			text(""+index, x -5, y +5);
+		} else if (editMode) {
+			fill(0,255,0);
+			pushMatrix();
+			translate((float) p.x, (float) p.y, (float) p.z);
+			sphere(10);
+			popMatrix();
+		}
+
+  	}
+
 	public void drawEdge(Edge e)
 	  {
 	    stroke(0);
-	    line((float) e.p1.x, (float) e.p1.y, (float) e.p2.x, (float) e.p2.y);
+	    line((float) e.p1.x, (float) e.p1.y, (float) e.p1.z, (float) e.p2.x, (float) e.p2.y, (float) e.p2.z);
 	  }
 	
 	public void drawCorner(Corner c)
@@ -347,9 +336,9 @@ public class MyApplet extends PApplet {
 	  int leastIndex;
 	  int leastFound=-1;
 	  //Loop to find which vertex is shorest distance from the click
-	  for (leastIndex=0; leastIndex<g.points.size(); leastIndex++)
+	  for (leastIndex=0; leastIndex<model.mainGraph.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector((float) g.points.get(leastIndex).x,(float) g.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) model.mainGraph.points.get(leastIndex).x,(float) model.mainGraph.points.get(leastIndex).y);
 	    dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist<reg)
@@ -368,9 +357,9 @@ public class MyApplet extends PApplet {
 	  int leastIndex;
 	  int leastFound=-1;
 	  //Loop to find which vertex is shorest distance from the click
-	  for (leastIndex=0; leastIndex<g.points.size(); leastIndex++)
+	  for (leastIndex=0; leastIndex<model.mainGraph.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector((float) g.points.get(leastIndex).x,(float) g.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) model.mainGraph.points.get(leastIndex).x,(float) model.mainGraph.points.get(leastIndex).y);
 		dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist>reg1 && dist<reg2)
