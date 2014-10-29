@@ -167,8 +167,4 @@ public class Vector {
 		return this.mul(cos(angle)).add(this.crossProd(k).mul(sin(angle))).add(k.mul(this.dotProduct(k)).mul(1 - cos(angle)));
 		
 	}
-	
-	public Vector rotate(double angle) {
-		return this.rotate(angle, new Vector(0,0,1));
-	}
 }

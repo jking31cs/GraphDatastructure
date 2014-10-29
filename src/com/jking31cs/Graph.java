@@ -75,7 +75,7 @@ public class Graph {
 			Integer nextPoint = v.get(o.get(startIndex));
 			Set<Integer> validNextIndices = new HashSet<>();
 			for (int i = 0; i < v.size(); i++) {
-				if (v.get(i).equals(nextPoint)) {
+				if (copy[i] != null && copy[i].equals(nextPoint)) {
 					validNextIndices.add(i);
 				}
 			}

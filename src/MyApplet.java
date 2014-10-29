@@ -9,7 +9,7 @@ import processing.event.MouseEvent;
 
 public class MyApplet extends PApplet {
 	
-	Model3D model;
+	Graph3D model;
 	PVector mouse;
 	PVector mouseClicked;
 	boolean drawMode;
@@ -50,7 +50,7 @@ public class MyApplet extends PApplet {
 		bose=loadImage("pics/portrait_bose.jpg");
 		bobby=loadImage("pics/portrait_bobby.png");
 
-		model = new Model3D();
+		model = new Graph3D();
 		for(int i=0;i<50;i++)
 		{
 			colorR.add((int)random(0,255));
@@ -65,18 +65,16 @@ public class MyApplet extends PApplet {
 		background(255);
 		if (drawMode) {
 			mouse=new PVector(mouseX, mouseY);
-			drawGraph(model.mainGraph);
+			drawGraph(model);
 		} else {
 			pushMatrix();
 			camera();
 			translate(width/2,height/2,dz); // puts origin of model at screen center and moves forward/away by dz
-			lights();  // turns on view-dependent lighting
+//			lights();  // turns on view-dependent lighting
 			rotateX(rx); rotateY(ry); // rotates the model around the new origin (center of screen)
 			rotateX(PI/2); // rotates frame around X to make X and Y basis vectors parallel to the floor
 			mouse=new PVector(mouseX, mouseY);
-			drawGraph(model.mainGraph);
-			drawGraph(model.z_offset_graph);
-			for (Edge e : model.verticalEdges()) drawEdge(e);
+			drawGraph(model);
 			popMatrix();
 		}
 		
@@ -87,21 +85,21 @@ public class MyApplet extends PApplet {
 		  //Dynamically drawing the next vertex and edge while drawing the graph
 		  if (drawMode)
 		  {
-		    if (model.mainGraph.points.size()>0)
+		    if (model.points.size()>0)
 		    {
 		      Point tempPoint=new Point(mouse.x, mouse.y);
 		      drawPoint(tempPoint,-1);
-		      Edge tempEdge=new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-1), tempPoint);
+		      Edge tempEdge=new Edge(model.points.get(model.points.size()-1), tempPoint);
 		      drawEdge(tempEdge);
 		    }
 		  }
 		  if (editMode) {
 			  
 			  
-			  if (model.mainGraph.points.size()>0 && editModeLeastFound!=-1) {
+			  if (model.points.size()>0 && editModeLeastFound!=-1) {
 			      Point tempPoint=new Point(mouse.x, mouse.y);
 			      drawPoint(tempPoint,-1);
-			      Edge tempEdge=new Edge(model.mainGraph.points.get(editModeLeastFound), tempPoint);
+			      Edge tempEdge=new Edge(model.points.get(editModeLeastFound), tempPoint);
 			      drawEdge(tempEdge);
 			      editModeClickCount++;
 			      //canAdd=true;
@@ -121,14 +119,13 @@ public class MyApplet extends PApplet {
 	  //Add new vertices and edges onclick
 	  if (drawMode)
 	  {
-	    Point addedPoint;
-	    if (model.mainGraph.points.size()>=3)
+	    Point addedPoint = null;
+	    if (model.points.size()>=3)
 	    {
 	      leastFound=findClickedVertex(20);
 	      if (leastFound!=-1)
 	      {
-	        addedPoint=new Point(-1,-1);
-	        model.addEdge(new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-1), model.mainGraph.points.get(leastFound)));
+	        model.addEdge(new Edge(model.points.get(model.points.size()-2), model.points.get(leastFound)));
 	      } else
 	      {
 	        addedPoint=new Point(mouse.x, mouse.y);
@@ -137,13 +134,14 @@ public class MyApplet extends PApplet {
 	    {
 	    	addedPoint=new Point(mouse.x, mouse.y);
 	    }
-	    if(addedPoint.x!=-1 && addedPoint.y!=-1)
-	    	model.addPoint(addedPoint);
-	    if (model.mainGraph.points.size()>1 && addedPoint.x!=-1 && addedPoint.y!=-1)
+	    if(addedPoint != null)
+	    	model.addVertex(addedPoint);
+	    if (model.points.size()/2>1 && addedPoint != null)
 	    {
-	      Edge addedEdge=new Edge(model.mainGraph.points.get(model.mainGraph.points.size()-2), model.mainGraph.points.get(model.mainGraph.points.size()-1));
-	      //graph.vertices.get(graph.vertices.size()-2).addEdge(addedEdge);
-	      model.addEdge(addedEdge);
+	    	Point prevPoint = model.points.get(model.points.size()-4);
+	    	Edge addedEdge=new Edge(prevPoint, addedPoint);
+	    	//graph.vertices.get(graph.vertices.size()-2).addEdge(addedEdge);
+	    	model.addEdge(addedEdge);
 	    }
 	  }
 
@@ -158,19 +156,19 @@ public class MyApplet extends PApplet {
 					// println("called");
 					int tempLeastFound = findClickedVertex(20);
 					if (tempLeastFound == -1) {
-						model.addPoint(new Point(mouse.x, mouse.y));
-						model.addEdge(new Edge(model.mainGraph.points.get(editModeLeastFound),
-								model.mainGraph.points.get(model.mainGraph.points.size() - 1)));
+						model.addVertex(new Point(mouse.x, mouse.y));
+						model.addEdge(new Edge(model.points.get(editModeLeastFound),
+								model.points.get(model.points.size() - 1)));
 					} else {
-						model.addEdge(new Edge(model.mainGraph.points.get(editModeLeastFound),
-								model.mainGraph.points.get(tempLeastFound)));
+						model.addEdge(new Edge(model.points.get(editModeLeastFound),
+								model.points.get(tempLeastFound)));
 					}
 					editModeClickCount = 0;
 					editModeLeastFound = -1;
 				}
 			}
 	    if(showCorners){
-	    	List<Corner> allCorners= model.mainGraph.getCorners();
+	    	List<Corner> allCorners= model.getCorners();
 	    	Corner minCorner=allCorners.get(0);
 	    	int minFound=0;
 	    	for(int i=0;i<allCorners.size();i++){
@@ -219,8 +217,8 @@ public class MyApplet extends PApplet {
 	    int leastFound=findClickedVertex(20);
 	    if (leastFound!=-1)
 	    {
-	      model.mainGraph.points.get(leastFound).x=mouse.x;
-	      model.mainGraph.points.get(leastFound).y=mouse.y;
+	      model.points.get(leastFound).x=mouse.x;
+	      model.points.get(leastFound).y=mouse.y;
 	    }
 	  }
 	}
@@ -284,16 +282,18 @@ public class MyApplet extends PApplet {
 			}
 			if (showCorners) {
 				//println(g1.getCorners().size());
-				Corner c = g1.getCornerFromIndex(g1.corners.get(cornerToShow));
-				drawCorner(c);
-				fill(0, 0, 255);
-				drawCorner(g1.nextCorner(g1.corners.get(cornerToShow)));
-				if (g1.swingCorner(g1.corners.get(cornerToShow)) != null) {
-					fill(0, 255, 0);
-					drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
-					fill(255,0,0);
-					drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
+				for (Corner c : model.getCorners()) {
+					drawCorner(c);
+					fill(0, 0, 255);
+					drawCorner(g1.nextCorner(g1.corners.get(cornerToShow)));
+					if (g1.swingCorner(g1.corners.get(cornerToShow)) != null) {
+						fill(0, 255, 0);
+						drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
+						fill(255,0,0);
+						drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
+					}					
 				}
+//				Corner c = g1.getCornerFromIndex(g1.corners.get(cornerToShow));
 			}
 		}
 			
@@ -326,7 +326,10 @@ public class MyApplet extends PApplet {
 	public void drawCorner(Corner c)
 	{
 		Vector cornerPosition=c.getPosition(20);
-		ellipse((float)cornerPosition.x,(float)cornerPosition.y,5,5);
+		pushMatrix();
+		translate((float) cornerPosition.x, (float) cornerPosition.y, (float) cornerPosition.z);
+		sphere(5);
+		popMatrix();
 	}
 	
 	//This function looks at the current mouse position and returns the index of the vertex on it(distance to register is set to "reg")
@@ -336,9 +339,10 @@ public class MyApplet extends PApplet {
 	  int leastIndex;
 	  int leastFound=-1;
 	  //Loop to find which vertex is shorest distance from the click
-	  for (leastIndex=0; leastIndex<model.mainGraph.points.size(); leastIndex++)
+	  for (leastIndex=0; leastIndex<model.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector((float) model.mainGraph.points.get(leastIndex).x,(float) model.mainGraph.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) model.points.get(leastIndex).x,(float) model.points.get(leastIndex).y);
+		if (pointPosition.z != 0) continue;
 	    dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist<reg)
@@ -357,9 +361,9 @@ public class MyApplet extends PApplet {
 	  int leastIndex;
 	  int leastFound=-1;
 	  //Loop to find which vertex is shorest distance from the click
-	  for (leastIndex=0; leastIndex<model.mainGraph.points.size(); leastIndex++)
+	  for (leastIndex=0; leastIndex<model.points.size(); leastIndex++)
 	  {
-		PVector pointPosition=new PVector((float) model.mainGraph.points.get(leastIndex).x,(float) model.mainGraph.points.get(leastIndex).y);
+		PVector pointPosition=new PVector((float) model.points.get(leastIndex).x,(float) model.points.get(leastIndex).y);
 		dist=PVector.sub(mouse, pointPosition).mag();
 	    //println(dist);
 	    if (dist>reg1 && dist<reg2)
