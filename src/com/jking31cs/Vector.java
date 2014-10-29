@@ -109,6 +109,10 @@ public class Vector {
 		return sqrt(this.dotProduct(this) * v.dotProduct(v) - this.dotProduct(v));
 	}
 	
+	public Vector crossProd(Vector v) {
+		return new Vector(this.y*v.z - this.z*v.y, this.x*v.z - this.z*v.x, this.x*v.y - this.y*v.x);
+	}
+	
 	public double angleBetween(Vector v) {
 		double dotProduct = normalize().dotProduct(v.normalize());
 
@@ -155,7 +159,16 @@ public class Vector {
 		return true;
 	}
 
+	/**
+	 * Rotates this vector around a given vector by the given angle.
+	 */
+	public Vector rotate(double angle, Vector rotVec) {
+		Vector k = rotVec.normalize();
+		return this.mul(cos(angle)).add(this.crossProd(k).mul(sin(angle))).add(k.mul(this.dotProduct(k)).mul(1 - cos(angle)));
+		
+	}
+	
 	public Vector rotate(double angle) {
-		return this.rotate(angle, new Vector(1,0), new Vector(0,1));
+		return this.rotate(angle, new Vector(0,0,1));
 	}
 }

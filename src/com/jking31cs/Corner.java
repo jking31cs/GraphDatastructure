@@ -76,10 +76,10 @@ public class Corner {
 	public Vector bisector()
 	{
 		if (e1.p2.equals(e2.p1)){
-			Vector v1 = e1.asVec();
+			Vector v1 = new Vector(e1.p1.x - e1.p2.x, e1.p1.y - e1.p2.y, e1.p1.z - e1.p2.z).normalize();
 			Vector v2 = e2.asVec();
-			Vector bi = v1.mul(v2.getMag()).add(v2.mul(v1.getMag()));
-			return bi.mul(-1);
+			Vector bi = v1.normalize().add(v2.normalize());
+			return bi.normalize();
 		}
 		throw new IllegalStateException("Edges in corner must share a point");
 	}
@@ -90,21 +90,16 @@ public class Corner {
 	public Vector getPosition(float offset)
 	{
 		//Special case for dangling edge:
-		Vector v1 = e1.asVec().normalize();
+		Vector v1 = new Vector(e1.p1.x - e1.p2.x, e1.p1.y - e1.p2.y, e1.p1.z - e1.p2.z).normalize();
 		Vector v2 = e2.asVec().normalize();
 		if (Math.abs(v1.determinant2(v2)) < .005) {
 			return new Vector(e1.p2.x, e1.p2.y).add(e1.asVec().normalize().mul(offset));
 		}
 
-		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y);
-		double theta=e1.asVec().angleBetween(e2.asVec().mul(-1))/2;
-		Vector bisectorVector=bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(-1);
-		if (theta < Math.PI && theta > 0) {
-			bisectorVector = bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(1);
-		}
-		if (theta > Math.PI && theta < 2*Math.PI) {
-			bisectorVector = bisector().normalize().mul(offset / Math.sin(theta)).rotate(Math.PI / 2).mul(-2);
-		}
+		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y, getCommonPoint().z);
+		
+		Vector bisectorVector=bisector().normalize().mul(offset).rotate(Math.PI, v1.crossProd(v2).normalize());
+		
 		return commonPoint.add(bisectorVector);
 	}
 
