@@ -11,20 +11,20 @@ public class Corner {
 	
 	public Point getCommonPoint() {
 		if (e1.p1.equals(e2.p1)) {
-			return new Point(e1.p1.x, e1.p1.y);
+			return new Point(e1.p1.x, e1.p1.y, e1.p1.z);
 			
 		}
 		
 		if (e1.p1.equals(e2.p2)) {
-			return new Point(e1.p1.x, e1.p1.y);
+			return new Point(e1.p1.x, e1.p1.y, e1.p1.z);
 		}
 		
 		if (e1.p2.equals(e2.p1)) {
-			return new Point(e1.p2.x, e1.p2.y);
+			return new Point(e1.p2.x, e1.p2.y, e1.p2.z);
 		}
 		
 		if (e1.p2.equals(e2.p2)) {
-			return new Point(e1.p2.x, e1.p2.y);
+			return new Point(e1.p2.x, e1.p2.y, e1.p2.z);
 		}
 		
 		throw new IllegalStateException("Edges in corner must share a point");
@@ -92,11 +92,15 @@ public class Corner {
 		//Special case for dangling edge:
 		Vector v1 = new Vector(e1.p1.x - e1.p2.x, e1.p1.y - e1.p2.y, e1.p1.z - e1.p2.z).normalize();
 		Vector v2 = e2.asVec().normalize();
+		Vector commonPointVector = new Vector(getCommonPoint().x, getCommonPoint().y, getCommonPoint().z);
 		if (Math.abs(v1.determinant2(v2)) < .005) {
-			return new Vector(e1.p2.x, e1.p2.y).add(e1.asVec().normalize().mul(offset));
+			if (getCommonPoint().equals(e1.p1))
+				return commonPointVector.add(e2.asVec().normalize().mul(offset));
+			else
+				return commonPointVector.add(e1.asVec().normalize().mul(offset));
 		}
 
-		Vector commonPoint=new Vector(getCommonPoint().x,getCommonPoint().y, getCommonPoint().z);
+		Vector commonPoint= commonPointVector;
 		
 		Vector bisectorVector=bisector().normalize().mul(offset).rotate(Math.PI, v1.crossProd(v2).normalize());
 		

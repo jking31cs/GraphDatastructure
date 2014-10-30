@@ -1,3 +1,6 @@
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.*;
 
 import com.jking31cs.*;
@@ -5,13 +8,14 @@ import com.jking31cs.*;
 import com.jking31cs.Vector;
 import processing.core.*;
 import processing.event.MouseEvent;
+import processing.opengl.PGL;
+import processing.opengl.PGraphics3D;
 
 
 public class MyApplet extends PApplet {
 	
 	Graph3D model;
 	PVector mouse;
-	PVector mouseClicked;
 	boolean drawMode;
 	boolean editMode;
 	boolean showSideWalks;
@@ -19,8 +23,6 @@ public class MyApplet extends PApplet {
 	int editModeClickCount=0;
 	int editModeLeastFound=-1;
 	int leastFound;
-	
-	int cornerToShow=0;
 	
 	//Randomized color lookup table
 	ArrayList<Integer> colorR=new ArrayList<>();
@@ -36,11 +38,13 @@ public class MyApplet extends PApplet {
 	String names="Bobby King";
 	
 	float dz = -490, rx = -.1832594f, ry = -.6479535f;
+	private Point showCornerPoint;
+
 	@Override
 	public void setup() {
 		
 		size(800,600, P3D);
-		
+		noSmooth();
 
 		drawMode=true;
 		editMode=false;
@@ -125,7 +129,7 @@ public class MyApplet extends PApplet {
 	      leastFound=findClickedVertex(20);
 	      if (leastFound!=-1)
 	      {
-	        model.addEdge(new Edge(model.points.get(model.points.size()-2), model.points.get(leastFound)));
+	        model.addEdge(new Edge(model.points.get(model.points.size() - 2), model.points.get(leastFound)));
 	      } else
 	      {
 	        addedPoint=new Point(mouse.x, mouse.y);
@@ -147,66 +151,47 @@ public class MyApplet extends PApplet {
 
 	  if (editMode)
 	  {
-			if (!showCorners) {
-				if (editModeClickCount == 0) {
-					editModeLeastFound = findClickedVertex(20, 40);
-				}
-				if (editModeClickCount > 0) {
-
-					// println("called");
-					int tempLeastFound = findClickedVertex(20);
-					if (tempLeastFound == -1) {
-						model.addVertex(new Point(mouse.x, mouse.y));
-						model.addEdge(new Edge(model.points.get(editModeLeastFound),
-								model.points.get(model.points.size() - 1)));
-					} else {
-						model.addEdge(new Edge(model.points.get(editModeLeastFound),
-								model.points.get(tempLeastFound)));
-					}
-					editModeClickCount = 0;
-					editModeLeastFound = -1;
-				}
-			}
 	    if(showCorners){
 	    	List<Corner> allCorners= model.getCorners();
-	    	Corner minCorner=allCorners.get(0);
-	    	int minFound=0;
-	    	for(int i=0;i<allCorners.size();i++){
-	    		float distance=(float)allCorners.get(i).getPosition(20).sub(new Vector(mouseX,mouseY)).getMag();
-	    		float minDistance=(float)minCorner.getPosition(20).sub(new Vector(mouseX,mouseY)).getMag();
-	    		if(distance<minDistance){
-	    			minFound=i;
-	    			minCorner=allCorners.get(i);
-	    		}
-	    	}
-	    	cornerToShow=minFound;
+
+			Point clickedPoint = pick(mouseX, mouseY);
+	    	Point highlightPoint = model.points.get(0);
+			for (Point p : model.points) {
+				float distance=(float)new Vector(p.x,p.y,p.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
+				float minDistance=(float)new Vector(highlightPoint.x,highlightPoint.y,highlightPoint.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
+				if(distance<minDistance){
+					highlightPoint = p;
+				}
+			}
+			showCornerPoint = highlightPoint;
 	    }
 	    
 	  }
 	}
 	
 	//This method switches input modes
-	public void keyReleased()
-	{
-	  if (key == 'e')
-	  {
-	    //println("called");
-	    drawMode=false;
-	    editMode=true;
-	  }
-	  if (key == 'd')
-	  {
-	    drawMode=true;
-	    editMode=false;
-	  }
-	  if (key == 's')
-	  {
-	    showSideWalks=!showSideWalks;
-	  }
-	  if (key == 'c')
-	  {
-	    showCorners=!showCorners;
-	  }
+	public void keyReleased() {
+	  	if (key == 'e') {
+	    	//println("called");
+			drawMode=false;
+			editMode=true;
+	  	}
+	  	if (key == 'd') {
+			drawMode=true;
+			editMode=false;
+	  	}
+	  	if (key == 's') {
+	    	showSideWalks=!showSideWalks;
+	  	}
+	  	if (key == 'c') {
+	    	showCorners=!showCorners;
+	  	}
+		if (Character.isDigit(key) && editMode && showCorners
+				&& Integer.parseInt(Character.toString(key)) < model.points.size()) {
+			showCornerPoint = model.points.get(Integer.parseInt(Character.toString(key)));
+			System.out.println(model.points.get(Integer.parseInt(Character.toString(key))));
+		}
+
 	}
 	
 	public void mouseDragged()
@@ -251,7 +236,6 @@ public class MyApplet extends PApplet {
 
 				// Draw all sidewalks
 				int z = 0;
-				List<Double> areas = g1.faceAreas();
 				for (Map.Entry<Integer, ArrayList<Corner>> entry : g1.getSideWalkPaths().entrySet()) {
 					List<Corner> loop = entry.getValue();
 					int j = 0;
@@ -282,16 +266,21 @@ public class MyApplet extends PApplet {
 			}
 			if (showCorners) {
 				//println(g1.getCorners().size());
+				List<Corner> cornersToShow = new ArrayList<>();
 				for (Corner c : model.getCorners()) {
-					drawCorner(c);
+					if (c.getCommonPoint().equals(showCornerPoint)) cornersToShow.add(c);
+				}
+				for (Corner c : cornersToShow) {
+					Integer index = g1.getCorners().indexOf(c);
 					fill(0, 0, 255);
-					drawCorner(g1.nextCorner(g1.corners.get(cornerToShow)));
-					if (g1.swingCorner(g1.corners.get(cornerToShow)) != null) {
-						fill(0, 255, 0);
-						drawCorner(g1.swingCorner(g1.corners.get(cornerToShow)));
-						fill(255,0,0);
-						drawCorner(g1.unSwingCorner(g1.corners.get(cornerToShow)));
-					}					
+					drawCorner(c);
+//					drawCorner(g1.nextCorner(g1.corners.get(index)));
+//					if (g1.swingCorner(g1.corners.get(index)) != null) {
+//						fill(0, 255, 0);
+//						drawCorner(g1.swingCorner(g1.corners.get(index)));
+//						fill(255,0,0);
+//						drawCorner(g1.unSwingCorner(g1.corners.get(index)));
+//					}
 				}
 //				Corner c = g1.getCornerFromIndex(g1.corners.get(cornerToShow));
 			}
@@ -306,7 +295,7 @@ public class MyApplet extends PApplet {
 			ellipse(x, y,20,20);
 			fill(0);
 
-			text(""+index, x -5, y +5);
+			text("" + index, x - 5, y + 5);
 		} else if (editMode) {
 			fill(0,255,0);
 			pushMatrix();
@@ -391,14 +380,43 @@ public class MyApplet extends PApplet {
 		if (keyPressed && key==' ') {
 			rx-=PI*(mouseY-pmouseY)/height;
 			ry+=PI*(mouseX-pmouseX)/width;
-			System.out.println(String.format("rx: %s, ry: %s, dz: %s", rx,ry,dz));
 		}
 	}	
 	
 	@Override
 	public void mouseWheel(MouseEvent event) {
 		dz -= event.getAmount(); 
-		System.out.println(String.format("rx: %s, ry: %s, dz: %s", rx,ry,dz));
+	}
+
+	public Point pick(int mX, int mY)
+	{
+		PGL pgl = beginPGL();
+		FloatBuffer depthBuffer = ByteBuffer.allocateDirect(1 << 2).order(ByteOrder.
+				nativeOrder()).asFloatBuffer();
+		pgl.readPixels(mX, height - mY - 1, 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT, depthBuffer);
+		float depthValue = depthBuffer.get(0);
+		depthBuffer.clear();
+		endPGL();
+
+		//get 3d matrices
+		PGraphics3D p3d = (PGraphics3D)g;
+		PMatrix3D proj = p3d.projection.get();
+		PMatrix3D modelView = p3d.modelview.get();
+		PMatrix3D modelViewProjInv = proj; modelViewProjInv.apply( modelView ); modelViewProjInv.invert();
+
+		float[] viewport = {0, 0, p3d.width, p3d.height};
+
+		float[] normalized = new float[4];
+		normalized[0] = ((mX - viewport[0]) / viewport[2]) * 2.0f - 1.0f;
+		normalized[1] = ((height - mY - viewport[1]) / viewport[3]) * 2.0f - 1.0f;
+		normalized[2] = depthValue * 2.0f - 1.0f;
+		normalized[3] = 1.0f;
+
+		float[] unprojected = new float[4];
+
+		modelViewProjInv.mult( normalized, unprojected );
+		Point point = new Point(unprojected[0] / unprojected[3], unprojected[1] / unprojected[3], unprojected[2] / unprojected[3]);
+		return point;
 	}
 	
 
