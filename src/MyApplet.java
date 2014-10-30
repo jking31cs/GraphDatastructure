@@ -38,7 +38,7 @@ public class MyApplet extends PApplet {
 	String names="Bobby King";
 	
 	float dz = -490, rx = -.1832594f, ry = -.6479535f;
-	private Point showCornerPoint;
+	private Integer showCorner = 0;
 
 	@Override
 	public void setup() {
@@ -149,24 +149,24 @@ public class MyApplet extends PApplet {
 	    }
 	  }
 
-	  if (editMode)
-	  {
-	    if(showCorners){
-	    	List<Corner> allCorners= model.getCorners();
-
-			Point clickedPoint = pick(mouseX, mouseY);
-	    	Point highlightPoint = model.points.get(0);
-			for (Point p : model.points) {
-				float distance=(float)new Vector(p.x,p.y,p.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
-				float minDistance=(float)new Vector(highlightPoint.x,highlightPoint.y,highlightPoint.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
-				if(distance<minDistance){
-					highlightPoint = p;
-				}
-			}
-			showCornerPoint = highlightPoint;
-	    }
-	    
-	  }
+//	  if (editMode)
+//	  {
+//	    if(showCorners){
+//	    	List<Corner> allCorners= model.getCorners();
+//
+//			Point clickedPoint = pick(mouseX, mouseY);
+//	    	Point highlightPoint = model.points.get(0);
+//			for (Point p : model.points) {
+//				float distance=(float)new Vector(p.x,p.y,p.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
+//				float minDistance=(float)new Vector(highlightPoint.x,highlightPoint.y,highlightPoint.z).sub(new Vector(clickedPoint.x, clickedPoint.y, clickedPoint.z)).getMag();
+//				if(distance<minDistance){
+//					highlightPoint = p;
+//				}
+//			}
+//			showCornerPoint = highlightPoint;
+//	    }
+//
+//	  }
 	}
 	
 	//This method switches input modes
@@ -180,17 +180,16 @@ public class MyApplet extends PApplet {
 			drawMode=true;
 			editMode=false;
 	  	}
-	  	if (key == 's') {
-	    	showSideWalks=!showSideWalks;
-	  	}
 	  	if (key == 'c') {
 	    	showCorners=!showCorners;
 	  	}
-		if (Character.isDigit(key) && editMode && showCorners
-				&& Integer.parseInt(Character.toString(key)) < model.points.size()) {
-			showCornerPoint = model.points.get(Integer.parseInt(Character.toString(key)));
-			System.out.println(model.points.get(Integer.parseInt(Character.toString(key))));
+		if (key == 'n' && editMode && showCorners) {
+			showCorner = model.corners.get(showCorner).n;
 		}
+		if (key == 's' && editMode && showCorners) {
+			showCorner = model.corners.get(showCorner).s;
+		}
+
 
 	}
 	
@@ -266,14 +265,8 @@ public class MyApplet extends PApplet {
 			}
 			if (showCorners) {
 				//println(g1.getCorners().size());
-				List<Corner> cornersToShow = new ArrayList<>();
-				for (Corner c : model.getCorners()) {
-					if (c.getCommonPoint().equals(showCornerPoint)) cornersToShow.add(c);
-				}
-				for (Corner c : cornersToShow) {
-					Integer index = g1.getCorners().indexOf(c);
 					fill(0, 0, 255);
-					drawCorner(c);
+					drawCorner(g1.getCorners().get(showCorner));
 //					drawCorner(g1.nextCorner(g1.corners.get(index)));
 //					if (g1.swingCorner(g1.corners.get(index)) != null) {
 //						fill(0, 255, 0);
@@ -281,7 +274,7 @@ public class MyApplet extends PApplet {
 //						fill(255,0,0);
 //						drawCorner(g1.unSwingCorner(g1.corners.get(index)));
 //					}
-				}
+//				}
 //				Corner c = g1.getCornerFromIndex(g1.corners.get(cornerToShow));
 			}
 		}
@@ -388,36 +381,36 @@ public class MyApplet extends PApplet {
 		dz -= event.getAmount(); 
 	}
 
-	public Point pick(int mX, int mY)
-	{
-		PGL pgl = beginPGL();
-		FloatBuffer depthBuffer = ByteBuffer.allocateDirect(1 << 2).order(ByteOrder.
-				nativeOrder()).asFloatBuffer();
-		pgl.readPixels(mX, height - mY - 1, 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT, depthBuffer);
-		float depthValue = depthBuffer.get(0);
-		depthBuffer.clear();
-		endPGL();
-
-		//get 3d matrices
-		PGraphics3D p3d = (PGraphics3D)g;
-		PMatrix3D proj = p3d.projection.get();
-		PMatrix3D modelView = p3d.modelview.get();
-		PMatrix3D modelViewProjInv = proj; modelViewProjInv.apply( modelView ); modelViewProjInv.invert();
-
-		float[] viewport = {0, 0, p3d.width, p3d.height};
-
-		float[] normalized = new float[4];
-		normalized[0] = ((mX - viewport[0]) / viewport[2]) * 2.0f - 1.0f;
-		normalized[1] = ((height - mY - viewport[1]) / viewport[3]) * 2.0f - 1.0f;
-		normalized[2] = depthValue * 2.0f - 1.0f;
-		normalized[3] = 1.0f;
-
-		float[] unprojected = new float[4];
-
-		modelViewProjInv.mult( normalized, unprojected );
-		Point point = new Point(unprojected[0] / unprojected[3], unprojected[1] / unprojected[3], unprojected[2] / unprojected[3]);
-		return point;
-	}
+//	public Point pick(int mX, int mY)
+//	{
+//		PGL pgl = beginPGL();
+//		FloatBuffer depthBuffer = ByteBuffer.allocateDirect(1 << 2).order(ByteOrder.
+//				nativeOrder()).asFloatBuffer();
+//		pgl.readPixels(mX, height - mY - 1, 1, 1, PGL.DEPTH_COMPONENT, PGL.FLOAT, depthBuffer);
+//		float depthValue = depthBuffer.get(0);
+//		depthBuffer.clear();
+//		endPGL();
+//
+//		//get 3d matrices
+//		PGraphics3D p3d = (PGraphics3D)g;
+//		PMatrix3D proj = p3d.projection.get();
+//		PMatrix3D modelView = p3d.modelview.get();
+//		PMatrix3D modelViewProjInv = proj; modelViewProjInv.apply( modelView ); modelViewProjInv.invert();
+//
+//		float[] viewport = {0, 0, p3d.width, p3d.height};
+//
+//		float[] normalized = new float[4];
+//		normalized[0] = ((mX - viewport[0]) / viewport[2]) * 2.0f - 1.0f;
+//		normalized[1] = ((height - mY - viewport[1]) / viewport[3]) * 2.0f - 1.0f;
+//		normalized[2] = depthValue * 2.0f - 1.0f;
+//		normalized[3] = 1.0f;
+//
+//		float[] unprojected = new float[4];
+//
+//		modelViewProjInv.mult( normalized, unprojected );
+//		Point point = new Point(unprojected[0] / unprojected[3], unprojected[1] / unprojected[3], unprojected[2] / unprojected[3]);
+//		return point;
+//	}
 	
 
 	public static void main(String[] args) {
