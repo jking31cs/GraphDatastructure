@@ -56,55 +56,10 @@ public class Graph {
 		 */
 		o.add(indexOfHE1, indexOfHE2);
 		o.add(indexOfHE2, indexOfHE1);
+		calculateNextIndices();
+		Integer[] copy;
 		
-		/*
-		 * 3.  Loop through to find next indicies.
-		 * 
-		 * ALGORITHM:
-		 * 	    1.  Find all valid next indices
-		 *      2.  Find which valid next halfedge is the smallest angle (keeping on the sidewalk)
-		 *      3.  Set that new halfedge as the next halfedge, set up next index.
-		 *      4.  Repeat
-		 */
 
-		Integer[] copy = v.toArray(new Integer[v.size()]);
-		Integer[] nextArr = new Integer[v.size()];
-		Integer target = 0;
-		Integer startIndex = target;
-		while (notAllNull(copy)) {
-			Integer nextPoint = v.get(o.get(startIndex));
-			Set<Integer> validNextIndices = new HashSet<>();
-			for (int i = 0; i < v.size(); i++) {
-				if (copy[i] != null && copy[i].equals(nextPoint)) {
-					validNextIndices.add(i);
-				}
-			}
-			double minAngle = Double.MAX_VALUE;
-			Integer nextIndex = null;
-			for (Integer j : validNextIndices) {
-				Vector v1 = new Edge(points.get(v.get(startIndex)), points.get(v.get(j))).asVec().normalize();
-				Vector v2 = new Edge(points.get(v.get(j)), points.get(v.get(o.get(j)))).asVec().normalize();
-				double angleBetween = v1.angleBetween(v2);
-				if (angleBetween < minAngle) {
-					minAngle = angleBetween;
-					nextIndex = j;
-				}
-			}
-			nextArr[startIndex] = nextIndex;
-			startIndex = nextIndex;
-			copy[startIndex] = null;
-
-			if (nextIndex.equals(target)) {
-				for (int i = 0; i < copy.length; i++) {
-					if (copy[i] == null) continue;
-					startIndex = i;
-					target = startIndex;
-					break;
-				}
-			}
-		}
-
-		n = Arrays.asList(nextArr);
 
 		/*
 		 * We can find previous indices with the next array.
@@ -219,6 +174,58 @@ public class Graph {
 				startSwingIndex++;
 			}
 		}
+	}
+
+	/*
+	 * 3.  Loop through to find next indicies.
+	 *
+	 * ALGORITHM:
+	 * 	    1.  Find all valid next indices
+	 *      2.  Find which valid next halfedge is the smallest angle (keeping on the sidewalk)
+	 *      3.  Set that new halfedge as the next halfedge, set up next index.
+	 *      4.  Repeat
+	 */
+	private void calculateNextIndices() {
+		Integer[] copy = v.toArray(new Integer[v.size()]);
+		Integer[] nextArr = new Integer[v.size()];
+		Integer target = 0;
+		Integer startIndex = target;
+		while (notAllNull(copy)) {
+			Integer nextIndex = null;
+			Edge curEdge = new Edge(points.get(v.get(startIndex)), points.get(v.get(o.get(startIndex))));
+			Set<Integer> possibleNextIndices = new HashSet<>();
+			for (int i = 0; i < v.size(); i++) {
+				if (v.get(i).equals(v.get(o.get(startIndex))) && copy[i] != null) {
+					possibleNextIndices.add(i);
+				}
+			}
+			double minAngle = Double.MAX_VALUE;
+			for (Integer j : possibleNextIndices) {
+				Vector v1 = curEdge.asVec().normalize();
+				Vector v2 = new Edge(points.get(v.get(j)), points.get(v.get(o.get(j)))).asVec().normalize();
+				double angleBetween = v1.angleBetween(v2);
+				if (angleBetween < minAngle) {
+					minAngle = angleBetween;
+					nextIndex = j;
+				}
+			}
+
+			nextArr[startIndex] = nextIndex;
+			startIndex = nextIndex;
+			copy[startIndex] = null;
+
+			if (nextIndex.equals(target)) {
+				for (int i = 0; i < copy.length; i++) {
+					if (copy[i] == null) continue;
+					startIndex = i;
+					target = startIndex;
+					break;
+				}
+			}
+
+		}
+
+		n = Arrays.asList(nextArr);
 	}
 
 	private boolean notAllNull(Integer[] copy) {
@@ -356,7 +363,7 @@ public class Graph {
 				list.add(new Edge(start, end));
 				curIndex = nextIndex;
 				nextIndex = n.get(curIndex);
-			} while (curIndex != startIndex);
+			} while (!curIndex.equals(startIndex));
 			toRet.add(list);
 		}
 		return toRet;

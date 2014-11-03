@@ -232,7 +232,7 @@ public class GraphTest {
 		graph3D.addEdge(new Edge(points[1], points[2]));
 		graph3D.addEdge(new Edge(points[2], points[0]));
 
-		assertTrue(true);
+		assertEquals(3, graph3D.getFacePaths().size());
 	}
 
 }
