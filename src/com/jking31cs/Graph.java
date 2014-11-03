@@ -186,16 +186,16 @@ public class Graph {
 	 *      4.  Repeat
 	 */
 	private void calculateNextIndices() {
-		Integer[] copy = v.toArray(new Integer[v.size()]);
 		Integer[] nextArr = new Integer[v.size()];
 		Integer target = 0;
 		Integer startIndex = target;
-		while (notAllNull(copy)) {
+		Set<Integer> usedIndices = new HashSet<>();
+		while (notAllFilled(nextArr)) {
 			Integer nextIndex = null;
 			Edge curEdge = new Edge(points.get(v.get(startIndex)), points.get(v.get(o.get(startIndex))));
 			Set<Integer> possibleNextIndices = new HashSet<>();
 			for (int i = 0; i < v.size(); i++) {
-				if (v.get(i).equals(v.get(o.get(startIndex))) && copy[i] != null) {
+				if (v.get(i).equals(v.get(o.get(startIndex))) && !usedIndices.contains(i)) {
 					possibleNextIndices.add(i);
 				}
 			}
@@ -211,12 +211,14 @@ public class Graph {
 			}
 
 			nextArr[startIndex] = nextIndex;
+			usedIndices.add(nextIndex);
 			startIndex = nextIndex;
-			copy[startIndex] = null;
 
-			if (nextIndex.equals(target)) {
-				for (int i = 0; i < copy.length; i++) {
-					if (copy[i] == null) continue;
+			if (v.get(o.get(nextIndex)).equals(v.get(target))) {
+				nextArr[startIndex] = target;
+				usedIndices.add(target);
+				for (int i = 0; i < nextArr.length; i++) {
+					if (nextArr[i] != null) continue;
 					startIndex = i;
 					target = startIndex;
 					break;
@@ -226,6 +228,13 @@ public class Graph {
 		}
 
 		n = Arrays.asList(nextArr);
+	}
+
+	private boolean notAllFilled(Integer[] nextArr) {
+		for (int i = 0; i < nextArr.length; i++) {
+			if (nextArr[i] == null) return true;
+		}
+		return false;
 	}
 
 	private boolean notAllNull(Integer[] copy) {
