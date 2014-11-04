@@ -140,14 +140,18 @@ public class Graph {
 		 * 2.  Calculate next corners.
 		 */
 		for (CornerIndexInfo c1 : corners) {
-			for (int i = 0; i < corners.size(); i++) {
-				CornerIndexInfo c2 = corners.get(i);
-				if (c1.v.equals(c2.v)) continue;
-				if (n.get(c1.v).equals(c2.v)) {
-					c1.n = i;
-				}
-			}
+			c1.n = n.get(c1.v);
 		}
+		/*
+		 * Calculate previous corners 
+		 */
+		for (int i = 0; i < corners.size(); i++) {
+			corners.get(corners.get(i).n).p = i;
+		}
+		swingCornerCalculation();
+	}
+
+	private void swingCornerCalculation() {
 		/*
 		 * 3.  Calculate swing corners.  We do thing by finding all corners on same point, then
 		 * just setting it in motion.  IE corners 0,1,2 are all point p.  The swing in order will
@@ -165,13 +169,20 @@ public class Graph {
 		}
 		for (Set<Integer> cIndicies : cornerPointMap.values()) {
 			Integer[] cIndexArr = cIndicies.toArray(new Integer[cIndicies.size()]);
-			if (cIndexArr.length == 1) continue; //TODO dandling edge corners have no swing...what do we do?
-			int startSwingIndex = 1;
+			if (cIndexArr.length == 1) {
+				corners.get(cIndexArr[0]).s = cIndexArr[0];
+				continue;
+			}
 			CornerIndexInfo c = corners.get(cIndexArr[0]);
 			while (c.s == null) {
-				c.s = cIndexArr[startSwingIndex % cIndexArr.length];
-				c = corners.get(cIndexArr[startSwingIndex % cIndexArr.length]);
-				startSwingIndex++;
+				for (Integer cornerIndex : cIndexArr) {
+					CornerIndexInfo c2 = corners.get(cornerIndex);
+					if (c.equals(c2)) continue;
+					if (v.get(corners.get(c.p).v).equals(v.get(corners.get(c2.n).v))) {
+						c.s = cornerIndex;
+					}
+				}
+				c = corners.get(c.s);
 			}
 		}
 	}
@@ -214,9 +225,7 @@ public class Graph {
 			usedIndices.add(nextIndex);
 			startIndex = nextIndex;
 
-			if (v.get(o.get(nextIndex)).equals(v.get(target))) {
-				nextArr[startIndex] = target;
-				usedIndices.add(target);
+			if (nextIndex.equals(target)) {
 				for (int i = 0; i < nextArr.length; i++) {
 					if (nextArr[i] != null) continue;
 					startIndex = i;
